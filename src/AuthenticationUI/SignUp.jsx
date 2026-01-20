@@ -7,6 +7,7 @@ import './AuthenticationPages.css';
 function NormalUserSignUp() {
 
     const [email,setEmail] = useState('');
+    const [name,setName] = useState('');
     const [password,setPassword] = useState('');
     const [confirmPassword,setConfirmPassword] = useState('');
     const [error,setError] = useState('');
@@ -26,6 +27,12 @@ function NormalUserSignUp() {
         //Verify email is not empty
         if(!email){
             setError("Email is required");
+            return;
+        }
+
+        //Name validation
+        if(!name){
+            setError("Name is required");
             return;
         }
 
@@ -49,9 +56,14 @@ function NormalUserSignUp() {
       {/* Form */}
         <form className='auth-form' onSubmit={handleRegister}>
 
+        {/* Name */}
+        <label htmlFor="name">Name:</label><br />
+        <input type="text" id="name" value={name} placeholder='Enter Your Name' onChange={(e) => setName(e.target.value)} required /> <br/>
+
         {/* Email */}
         <label htmlFor="email">Email:</label><br />
         <input type="email" id="email" value={email} placeholder='abc@gmail.com' onChange={(e) => setEmail(e.target.value)} required /> <br/>
+
 
         {/* Password */}
         <label htmlFor="password">Password:</label><br />

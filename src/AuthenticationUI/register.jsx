@@ -9,6 +9,7 @@ function Register() {
 
 
     const [email,setEmail] = useState('');
+    const [name,setName] = useState('');
     const [password,setPassword] = useState('');
     const [confirmPassword,setConfirmPassword] = useState('');
     const [idImage,setIdImage] = useState(null);
@@ -30,6 +31,12 @@ function Register() {
         //Email domain validation
         if(!email.endsWith('@std.uwu.ac.lk')){
             setError("Please use your student email to register.");
+            return;
+        }
+
+        //Name validation
+        if(!name){
+            setError("Name is required");
             return;
         }
 
@@ -65,6 +72,11 @@ function Register() {
 
         {/* Form */}
         <form className='auth-form' onSubmit={handleRegister}>
+
+        {/* Name */}
+        <label htmlFor="name">Name:</label><br />
+        <input type="text" placeholder='Enter Your Name' value={name} onChange={(e) => setName(e.target.value)} required /> <br/>
+
 
         {/* Email */}
         <label htmlFor="email">Email:</label><br />
