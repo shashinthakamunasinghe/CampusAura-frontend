@@ -4,6 +4,8 @@ import { Route,Routes } from "react-router-dom"
 import Login from "./AuthenticationUI/login";
 import Register from "./AuthenticationUI/register";
 import NormalUserSignUp from "./AuthenticationUI/SignUp";
+import AdminTopBar from "./Components/Admin.jsx";
+
 
 import Navbar from "./Components/Navbar.jsx";
 import HeroSlider from "./Components/LandingPage/HeroSlider.jsx";
@@ -41,6 +43,9 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/signup" element={<NormalUserSignUp />} />
+      
+      {/* Admin page */}
+      <Route path="/admin" element={<AdminTopBar />} />
     </Routes>
   );
 }
