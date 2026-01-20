@@ -27,7 +27,7 @@ function Login() {
 
   return (
       <div className='auth-container'>
-        <div className='auth-card'> 
+          <div className='auth-card'> 
          <h1>CampusAura</h1>
          <h2>Student Login</h2>
          <p>Sign in to access your student portal</p>
@@ -48,7 +48,7 @@ function Login() {
                     <input type="password" id="password" value={password} placeholder='Enter Your password' onChange={(e) => setPassword(e.target.value)} required /><br /><br/>
 
                     {/* Login button */}
-                    <button type="submit">Login</button><br/>
+                    <button type="submit">Login</button><br/><br/>
 
                 <div className='auth-Link'>     
                     <p>Don't have an account? <Link to="/SignUp">Sign Up</Link></p>
@@ -56,8 +56,9 @@ function Login() {
 
             </form>
         </div>
+        </div>
          
-      </div>
+    
   )
 }
 

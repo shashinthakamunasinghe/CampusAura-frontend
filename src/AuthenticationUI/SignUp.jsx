@@ -39,11 +39,9 @@ function NormalUserSignUp() {
     }
 
   return (
-    <div className='auth-container'>
-      <div className='auth-card'>
-      <h1>CampusAura</h1>
-      <h2>User Registration</h2>
-      <p>Create your account to get started</p>
+    <div>
+       
+      
 
       {/*Error Message */}
       {error && <p className='error_message'>{error}</p>}
@@ -66,13 +64,14 @@ function NormalUserSignUp() {
         {/* Register button */}
         <button type="submit">Register</button><br/><br/>
 
+
       <div className='auth-Link'> 
-        <span>Register As Student   </span><Link to="/register">Student Registration</Link>
+        <span>Already have an account? </span><Link to="/login">Login</Link>
       </div>
 
         </form>
         </div>
-    </div>
+
   )
 }
 

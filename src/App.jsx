@@ -15,10 +15,12 @@ import Features from "./Components/LandingPage/Features.jsx";
 import ContactUs from "./Components/LandingPage/ContactUs.jsx";
 import Footer from "./Components/LandingPage/Footer.jsx";
 
+import UnifiedSignUp from "./AuthenticationUI/UnifiedSignUp";
+
 function Home() {
   return (
     <>
-      <Navbar />
+       
       <HeroSlider />
       <IntroSection />
       <LatestEvents />
@@ -26,22 +28,27 @@ function Home() {
       <Marketplace />
       <Features />
       <ContactUs />
-      <Footer />
+       
     </>
   );
 }
 
 function App() {
   return (
+    <> 
+    <Navbar />
     <Routes>
       {/* Public pages */}
       <Route path="/" element={<Home />} />
 
       {/* Auth pages */}
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/signup" element={<NormalUserSignUp />} />
+      <Route path="/signup" element={<UnifiedSignUp />} />
+      {/*<Route path="/register" element={<Register />} />
+      <Route path="/signup" element={<NormalUserSignUp />} />*/}
     </Routes>
+    <Footer />
+    </>
   );
 }
 
