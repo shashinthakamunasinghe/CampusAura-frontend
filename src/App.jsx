@@ -5,7 +5,7 @@ import Login from "./AuthenticationUI/login";
 import Register from "./AuthenticationUI/register";
 import NormalUserSignUp from "./AuthenticationUI/SignUp";
 import AdminTopBar from "./Components/Admin.jsx";
-
+import EventManagement from "./Components/EventManagement";
 
 import Navbar from "./Components/Navbar.jsx";
 import HeroSlider from "./Components/LandingPage/HeroSlider.jsx";
@@ -46,6 +46,9 @@ function App() {
       
       {/* Admin page */}
       <Route path="/admin" element={<AdminTopBar />} />
+      
+      {/* Add this test route */}
+      <Route path="/test-events" element={<EventManagement />} />
     </Routes>
   );
 }
