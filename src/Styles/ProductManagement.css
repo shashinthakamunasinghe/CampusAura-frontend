@@ -1,0 +1,193 @@
+.product-mgmt-page {
+  background: #f5f5f5;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem;
+}
+
+.product-mgmt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.2rem;
+}
+
+.product-mgmt-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+
+.product-mgmt-pending {
+  background: #fff;
+  color: #222;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 16px;
+  padding: 0.4rem 1.2rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.product-mgmt-list-container {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 0.5rem 0;
+}
+
+.product-mgmt-row {
+  display: flex;
+  align-items: center;
+  padding: 1.3rem 2rem;
+  border-bottom: 1px solid #ececec;
+}
+
+.product-mgmt-row:last-child {
+  border-bottom: none;
+}
+.product-mgmt-page {
+  background: #f8fafc;
+  min-height: calc(100vh - 70px);
+  padding: 2rem;
+}
+.product-mgmt-list-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  padding: 0;
+  overflow: hidden;
+}
+.product-mgmt-row {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.2s ease;
+}
+.product-mgmt-row:last-child {
+  border-bottom: none;
+}
+.product-mgmt-row:hover {
+  background-color: #f8fafc;
+}
+.product-mgmt-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin-right: 1.2rem;
+}
+
+.product-mgmt-icon {
+  background: #ededed;
+  border-radius: 10px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1.5rem;
+}
+
+.product-mgmt-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.product-mgmt-name {
+  font-size: 1.13rem;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 0.2rem;
+}
+
+.product-mgmt-owner {
+  color: #888;
+  font-size: 0.97rem;
+}
+
+.product-mgmt-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-right: 1.5rem;
+  min-width: 70px;
+  text-align: right;
+}
+
+.product-mgmt-status-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 210px;
+  justify-content: flex-end;
+}
+
+.product-mgmt-status {
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 16px;
+  padding: 0.3rem 1.1rem;
+  margin-right: 0.5rem;
+}
+
+.product-mgmt-status.approved {
+  background: #0d47a1;
+  color: #fff;
+}
+
+.product-mgmt-status.pending {
+  background: #0097a7;
+  color: #fff;
+}
+
+.product-mgmt-status.disabled {
+  background: #bdbdbd;
+  color: #fff;
+}
+
+.product-mgmt-btn {
+  background: #fff;
+  border: 1.5px solid #222;
+  color: #222;
+  border-radius: 8px;
+  padding: 0.35rem 1.1rem;
+  font-size: 0.98rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.18s, color 0.18s, border 0.18s;
+}
+
+.product-mgmt-btn:hover {
+  background: #222;
+  color: #fff;
+  border-color: #222;
+}
+
+@media (max-width: 900px) {
+  .product-mgmt-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 1.1rem 1rem;
+  }
+  .product-mgmt-status-actions {
+    width: 100%;
+    justify-content: flex-start;
+    min-width: 0;
+  }
+  .product-mgmt-price {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+}
