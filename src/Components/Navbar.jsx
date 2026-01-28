@@ -11,8 +11,8 @@ export default function Navbar() {
       </div>
 
       <ul className="nav-links">
-        <li>Events</li>
-        <li>Marketplace</li>
+        <li><Link to="/events">Events</Link></li>
+        <li><Link to="/Marketplace">Marketplace</Link></li>
         <li>Community</li>
       </ul>
 

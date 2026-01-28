@@ -16,6 +16,9 @@ import Features from "./Components/LandingPage/Features.jsx";
 import ContactUs from "./Components/LandingPage/ContactUs.jsx";
 import Footer from "./Components/LandingPage/Footer.jsx";
 
+import FullEventPage from "./Components/EventPageUI/FullEventPage.jsx";
+import EventDetails from "./Components/EventPageUI/EventDetail.jsx";
+
 function Home() {
   return (
     <>
@@ -42,6 +45,10 @@ function App() {
         {/* Auth pages */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<UnifiedSignUp />} />
+
+        {/* Event pages */}
+        <Route path="/events" element={<FullEventPage />} />
+        <Route path="/events/:id" element={<EventDetails />} />
 
         {/* Admin page */}
         <Route path="/admin" element={<AdminTopBar />} />
