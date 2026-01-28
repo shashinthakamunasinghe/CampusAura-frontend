@@ -2,8 +2,7 @@ import React from "react";
 
 import { Route,Routes } from "react-router-dom"
 import Login from "./AuthenticationUI/login";
-import Register from "./AuthenticationUI/register";
-import NormalUserSignUp from "./AuthenticationUI/SignUp";
+import EventDetails from "./Components/EventPageUI/EventDetail.jsx";
 
 import Navbar from "./Components/Navbar.jsx";
 import HeroSlider from "./Components/LandingPage/HeroSlider.jsx";
@@ -16,6 +15,7 @@ import ContactUs from "./Components/LandingPage/ContactUs.jsx";
 import Footer from "./Components/LandingPage/Footer.jsx";
 
 import UnifiedSignUp from "./AuthenticationUI/UnifiedSignUp";
+import FullEventPage from "./Components/EventPageUI/FullEventPage.jsx";
 
 function Home() {
   return (
@@ -44,8 +44,8 @@ function App() {
       {/* Auth pages */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<UnifiedSignUp />} />
-      {/*<Route path="/register" element={<Register />} />
-      <Route path="/signup" element={<NormalUserSignUp />} />*/}
+      <Route path="/events" element={<FullEventPage />} />
+      <Route path="/events/:id" element={<EventDetails />} />
     </Routes>
     <Footer />
     </>
