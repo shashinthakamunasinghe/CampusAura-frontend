@@ -7,6 +7,7 @@ import './AuthenticationPages.css';
 function NormalUserSignUp() {
 
     const [email,setEmail] = useState('');
+    const [name,setName] = useState('');
     const [password,setPassword] = useState('');
     const [confirmPassword,setConfirmPassword] = useState('');
     const [error,setError] = useState('');
@@ -29,6 +30,12 @@ function NormalUserSignUp() {
             return;
         }
 
+        //Name validation
+        if(!name){
+            setError("Name is required");
+            return;
+        }
+
         try{
             await createUserWithEmailAndPassword(auth, email, password);
             //alert("Registration successful!");
@@ -39,11 +46,9 @@ function NormalUserSignUp() {
     }
 
   return (
-    <div className='auth-container'>
-      <div className='auth-card'>
-      <h1>CampusAura</h1>
-      <h2>User Registration</h2>
-      <p>Create your account to get started</p>
+    <div>
+       
+      
 
       {/*Error Message */}
       {error && <p className='error_message'>{error}</p>}
@@ -51,9 +56,14 @@ function NormalUserSignUp() {
       {/* Form */}
         <form className='auth-form' onSubmit={handleRegister}>
 
+        {/* Name */}
+        <label htmlFor="name">Name:</label><br />
+        <input type="text" id="name" value={name} placeholder='Enter Your Name' onChange={(e) => setName(e.target.value)} required /> <br/>
+
         {/* Email */}
         <label htmlFor="email">Email:</label><br />
         <input type="email" id="email" value={email} placeholder='abc@gmail.com' onChange={(e) => setEmail(e.target.value)} required /> <br/>
+
 
         {/* Password */}
         <label htmlFor="password">Password:</label><br />
@@ -66,13 +76,14 @@ function NormalUserSignUp() {
         {/* Register button */}
         <button type="submit">Register</button><br/><br/>
 
+
       <div className='auth-Link'> 
-        <span>Register As Student   </span><Link to="/register">Student Registration</Link>
+        <span>Already have an account? </span><Link to="/login">Login</Link>
       </div>
 
         </form>
         </div>
-    </div>
+
   )
 }
 

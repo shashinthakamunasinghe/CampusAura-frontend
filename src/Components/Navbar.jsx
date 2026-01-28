@@ -1,4 +1,6 @@
-import '../Styles/Navbar.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import "../Styles/Navbar.css";
 
 export default function Navbar() {
   return (
@@ -9,14 +11,18 @@ export default function Navbar() {
       </div>
 
       <ul className="nav-links">
-        <li>Events</li>
-        <li>Marketplace</li>
+        <li><Link to="/events">Events</Link></li>
+        <li><Link to="/Marketplace">Marketplace</Link></li>
         <li>Community</li>
       </ul>
 
       <div className="nav-actions">
-        <button className="btn-primary">Sign In</button>
-        <button className="btn-primary">Join Campus</button>
+        <Link to="/login">
+          <button className="btn-primary">Sign In</button>
+        </Link>
+        <Link to="/signup">
+          <button className="btn-primary">Sign Up</button>
+        </Link>
       </div>
     </nav>
   );
