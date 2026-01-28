@@ -1,4 +1,6 @@
-import '../Styles/Navbar.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import "../Styles/Navbar.css";
 
 export default function Navbar() {
   return (
@@ -15,8 +17,12 @@ export default function Navbar() {
       </ul>
 
       <div className="nav-actions">
-        <button className="btn-primary">Sign In</button>
-        <button className="btn-primary">Join Campus</button>
+        <Link to="/login">
+          <button className="btn-primary">Sign In</button>
+        </Link>
+        <Link to="/signup">
+          <button className="btn-primary">Sign Up</button>
+        </Link>
       </div>
     </nav>
   );

@@ -1,13 +1,12 @@
 import React from "react";
+import { Route, Routes } from "react-router-dom";
 
-import { Route,Routes } from "react-router-dom"
 import Login from "./AuthenticationUI/login";
-import Register from "./AuthenticationUI/register";
-import NormalUserSignUp from "./AuthenticationUI/SignUp";
+import UnifiedSignUp from "./AuthenticationUI/UnifiedSignUp";
+
 import AdminTopBar from "./Components/Admin.jsx";
-
-
 import Navbar from "./Components/Navbar.jsx";
+
 import HeroSlider from "./Components/LandingPage/HeroSlider.jsx";
 import IntroSection from "./Components/LandingPage/IntroSection.jsx";
 import LatestEvents from "./Components/LandingPage/LatestEvents.jsx";
@@ -20,7 +19,6 @@ import Footer from "./Components/LandingPage/Footer.jsx";
 function Home() {
   return (
     <>
-      <Navbar />
       <HeroSlider />
       <IntroSection />
       <LatestEvents />
@@ -28,25 +26,29 @@ function Home() {
       <Marketplace />
       <Features />
       <ContactUs />
-      <Footer />
     </>
   );
 }
 
 function App() {
   return (
-    <Routes>
-      {/* Public pages */}
-      <Route path="/" element={<Home />} />
+    <>
+      <Navbar />
 
-      {/* Auth pages */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/signup" element={<NormalUserSignUp />} />
-      
-      {/* Admin page */}
-      <Route path="/admin" element={<AdminTopBar />} />
-    </Routes>
+      <Routes>
+        {/* Public pages */}
+        <Route path="/" element={<Home />} />
+
+        {/* Auth pages */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<UnifiedSignUp />} />
+
+        {/* Admin page */}
+        <Route path="/admin" element={<AdminTopBar />} />
+      </Routes>
+
+      <Footer />
+    </>
   );
 }
 
