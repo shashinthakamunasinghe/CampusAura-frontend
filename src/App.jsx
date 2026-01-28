@@ -1,12 +1,21 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
+/* Auth */
 import Login from "./AuthenticationUI/login";
+import Register from "./AuthenticationUI/register";
+import NormalUserSignUp from "./AuthenticationUI/SignUp";
 import UnifiedSignUp from "./AuthenticationUI/UnifiedSignUp";
 
-import AdminTopBar from "./Components/Admin.jsx";
+/* Layout */
 import Navbar from "./Components/Navbar.jsx";
+import Footer from "./Components/LandingPage/Footer.jsx";
 
+/* Admin */
+import AdminTopBar from "./Components/Admin.jsx";
+import EventManagement from "./Components/EventManagement";
+
+/* Landing Page */
 import HeroSlider from "./Components/LandingPage/HeroSlider.jsx";
 import IntroSection from "./Components/LandingPage/IntroSection.jsx";
 import LatestEvents from "./Components/LandingPage/LatestEvents.jsx";
@@ -14,8 +23,8 @@ import AboutSection from "./Components/LandingPage/AboutSection.jsx";
 import Marketplace from "./Components/LandingPage/MarketPlace.jsx";
 import Features from "./Components/LandingPage/Features.jsx";
 import ContactUs from "./Components/LandingPage/ContactUs.jsx";
-import Footer from "./Components/LandingPage/Footer.jsx";
 
+/* Events */
 import FullEventPage from "./Components/EventPageUI/FullEventPage.jsx";
 import EventDetails from "./Components/EventPageUI/EventDetail.jsx";
 
@@ -44,14 +53,17 @@ function App() {
 
         {/* Auth pages */}
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/signup" element={<UnifiedSignUp />} />
+        <Route path="/signup/user" element={<NormalUserSignUp />} />
 
         {/* Event pages */}
         <Route path="/events" element={<FullEventPage />} />
         <Route path="/events/:id" element={<EventDetails />} />
 
-        {/* Admin page */}
+        {/* Admin pages */}
         <Route path="/admin" element={<AdminTopBar />} />
+        <Route path="/test-events" element={<EventManagement />} />
       </Routes>
 
       <Footer />
