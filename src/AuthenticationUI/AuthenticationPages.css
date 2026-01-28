@@ -50,6 +50,30 @@ body {
     margin-bottom: 25px;
 }
 
+/*Toggle button*/
+.user-toggle {
+  display: flex;
+  background: #e5e7eb;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.user-toggle button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background: transparent;
+  color: #374151;
+}
+
+.user-toggle button.active {
+  background: var(--primary);
+  color: white;
+}
+
 /*Form Styles*/
 .auth-form label{
     font-size: 15px;
@@ -69,7 +93,7 @@ body {
 }
 
 .auth-form input{
-    width : 95%;
+    width : 100%;
     padding: 10px;
     margin-top: 5px;
     margin-bottom: 15px;
@@ -79,7 +103,7 @@ body {
 }
 
 .auth-form input[type="file"] {
-    width: 97%;
+    width: 100%;
     padding: 6px;
 }
 
@@ -87,6 +111,24 @@ body {
     outline: none;
     border-color: var(--primary);
 }
+
+/*Dropdown list*/
+.auth-form select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  background-color: white;
+}
+
+.auth-form select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
 
 /* File Upload Styles */
 .file-upload{
