@@ -45,28 +45,87 @@ function Home() {
 function App() {
   return (
     <>
-      <Navbar />
-
       <Routes>
         {/* Public pages */}
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={
+            <>
+              <Navbar />
+              <Home />
+              <Footer />
+            </>
+          }
+        />
 
         {/* Auth pages */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/signup" element={<UnifiedSignUp />} />
-        <Route path="/signup/user" element={<NormalUserSignUp />} />
+        <Route
+          path="/login"
+          element={
+            <>
+              <Navbar />
+              <Login />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <>
+              <Navbar />
+              <Register />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <>
+              <Navbar />
+              <UnifiedSignUp />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/signup/user"
+          element={
+            <>
+              <Navbar />
+              <NormalUserSignUp />
+              <Footer />
+            </>
+          }
+        />
 
         {/* Event pages */}
-        <Route path="/events" element={<FullEventPage />} />
-        <Route path="/events/:id" element={<EventDetails />} />
+        <Route
+          path="/events"
+          element={
+            <>
+              <Navbar />
+              <FullEventPage />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/events/:id"
+          element={
+            <>
+              <Navbar />
+              <EventDetails />
+              <Footer />
+            </>
+          }
+        />
 
-        {/* Admin pages */}
+        {/* Admin pages (no Navbar/Footer) */}
         <Route path="/admin" element={<AdminTopBar />} />
         <Route path="/test-events" element={<EventManagement />} />
       </Routes>
-
-      <Footer />
     </>
   );
 }
