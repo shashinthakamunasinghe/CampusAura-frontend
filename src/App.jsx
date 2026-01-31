@@ -21,6 +21,7 @@ import IntroSection from "./Components/LandingPage/IntroSection.jsx";
 import LatestEvents from "./Components/LandingPage/LatestEvents.jsx";
 import AboutSection from "./Components/LandingPage/AboutSection.jsx";
 import Marketplace from "./Components/LandingPage/MarketPlace.jsx";
+import MarketplaceFull from "./Components/LandingPage/MarketplaceFull.jsx";
 import Features from "./Components/LandingPage/Features.jsx";
 import ContactUs from "./Components/LandingPage/ContactUs.jsx";
 
@@ -117,6 +118,18 @@ function App() {
             <>
               <Navbar />
               <EventDetails />
+              <Footer />
+            </>
+          }
+        />
+
+        {/* Marketplace full page */}
+        <Route
+          path="/marketplace"
+          element={
+            <>
+              <Navbar />
+              <MarketplaceFull />
               <Footer />
             </>
           }
