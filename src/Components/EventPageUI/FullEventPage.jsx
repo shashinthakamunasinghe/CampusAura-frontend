@@ -73,7 +73,22 @@ export default function EventsPage() {
       selectedCategory === "All"
         ? true
         : event.category === selectedCategory
-    );
+    )
+    .sort((a, b) => {
+      const parseEventDate = (dateStr) => {
+        // Fix format "March 15, 2025 | 9.00 AM" -> "March 15, 2025 9:00 AM"
+        return new Date(dateStr.replace(" |", "").replace(".", ":"));
+      };
+
+      if (sort === "upcoming") {
+        return parseEventDate(a.date) - parseEventDate(b.date);
+      } else if (sort === "newest") {
+        return parseEventDate(b.date) - parseEventDate(a.date);
+      } else if (sort === "popular") {
+        return b.attending - a.attending;
+      }
+      return 0;
+    });
 
   return (
     <>
