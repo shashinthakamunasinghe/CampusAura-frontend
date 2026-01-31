@@ -34,6 +34,7 @@ export default function Marketplace() {
 
   return (
     <section className="marketplace-section">
+      
       <div className="marketplace-header">
         <h2 className="marketplace-title">CampusAura Marketplace</h2>
         <button
