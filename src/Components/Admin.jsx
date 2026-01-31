@@ -23,8 +23,7 @@ function AdminTopBar() {
         return <UserManagement />;
       case 'products':
         return <ProductManagement />;
-      case 'payments':
-        return <div style={{padding: '2rem', color: '#0f172a'}}>Payments Content</div>;
+      // ...existing code...
       default:
         return <AdminDashboard />;
     }
@@ -95,14 +94,7 @@ function AdminTopBar() {
               <MdShoppingCart className="sidebar-icon" />
               <span>Product Management</span>
             </li>
-            <li
-              className={activeSection === "payments" ? "active" : ""}
-              onClick={() => setActiveSection("payments")}
-              style={{display: 'flex', alignItems: 'center', gap: '14px'}}
-            >
-              <FaDollarSign className="sidebar-icon" />
-              <span>Payment Monitoring</span>
-            </li>
+            {/* Payment Monitoring removed */}
           </ul>
         </div>
 
