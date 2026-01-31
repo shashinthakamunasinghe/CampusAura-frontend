@@ -43,7 +43,7 @@ const demoProducts = [
     price: 52,
     category: "Accessories",
     condition: "New",
-    images: ["/images/market4.jpg"],
+    images: ["/src/assets/Slant-4.webp"],
     description: "Travel-size backpack, fits all essentials.",
     seller: { name: "Casey R.", rating: 4.6, reviews: 15 },
     badge: "Accessories"
