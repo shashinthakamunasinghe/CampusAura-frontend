@@ -43,14 +43,15 @@
   padding: 0;
 }
 
-.nav-links li {
-  cursor: pointer;
+.nav-links li a {
+  text-decoration: none;
   font-size: 1rem;
-  color: #555;
+  color: #333;
   transition: color 0.3s;
 }
 
-.nav-links li:hover {
+.nav-links li a:hover,
+.nav-links li a.active {
   color: #4a90e2;
 }
 
@@ -72,4 +73,20 @@
 
 .btn-primary:hover {
   background-color: #357abd;
+}
+
+.nav-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #333;
+}
+
+.profile-icon {
+  color: #4a90e2;
+}
+
+.profile-email {
+  font-weight: 500;
+  color: #555;
 }
