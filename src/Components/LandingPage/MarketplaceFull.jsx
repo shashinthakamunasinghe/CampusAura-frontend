@@ -110,7 +110,7 @@ export default function MarketplaceFull() {
           ))}
         </div>
 
-        {/* Price Range & Sort (aligned in one row) */}
+        {/* Price Range Only */}
         <div className="marketplacefull-bottom-row">
           <div className="marketplacefull-price-sort-group">
             <span className="marketplacefull-label">Price:</span>
@@ -131,19 +131,6 @@ export default function MarketplaceFull() {
               onChange={e => setPriceRange([priceRange[0], +e.target.value])}
               className="marketplacefull-input"
             />
-          </div>
-          <div className="marketplacefull-price-sort-group">
-            <label className="marketplacefull-label" htmlFor="marketplacefull-sort">Sort by</label>
-            <select
-              id="marketplacefull-sort"
-              value={sortBy}
-              onChange={e => setSortBy(e.target.value)}
-              className="marketplacefull-input"
-            >
-              {sortOptions.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
           </div>
         </div>
       </div>

@@ -211,6 +211,7 @@
   align-items: center;
   gap: 4px;
   font-family: 'Inter', system-ui, Arial, sans-serif;
+  
 }
 .marketplacefull-price-range-inline input[type="number"] {
   width: 60px;
@@ -235,10 +236,14 @@
   width: 180px;
   padding: 10px 14px;
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  font-size: 14px;
+  border: 1px solid #0a4fa3;
+  font-size: 15px;
   cursor: pointer;
   font-family: 'Inter', system-ui, Arial, sans-serif;
+  text-align: center;
+  appearance: none;
+  background: #fff url('data:image/svg+xml;utf8,<svg fill="%230a4fa3" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7.293 7.293a1 1 0 011.414 0L10 8.586l1.293-1.293a1 1 0 111.414 1.414l-2 2a1 1 0 01-1.414 0l-2-2a1 1 0 010-1.414z"/></svg>') no-repeat right 12px center/18px 18px;
+  background-color: #fff;
 }
 /* MarketplaceFull.css */
 .marketplacefull-section {
@@ -544,9 +549,4 @@ background: rgba(233, 228, 228, 0.915);
   cursor: pointer;
 }
 
-/* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
-}
+
