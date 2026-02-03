@@ -31,6 +31,7 @@ import EventDetails from "./Components/EventPageUI/EventDetail.jsx";
 
 /* Profile */
 import Profile from "./Profile";
+import Cart from "./Components/Cart";
 
 function Home() {
   return (
@@ -137,6 +138,7 @@ function App() {
             </>
           }
         />
+        <Route path="/cart" element={<Cart />} />
 
         <Route
           path="/profile"
