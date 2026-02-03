@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import StudentRegister from "./studentRegister";           
 import ExternalRegister from "./externalRegister";     
+import logo from "../assets/logo.jpeg";
 import "./AuthenticationPages.css"; 
 
 function UnifiedSignUp() {
@@ -10,6 +11,7 @@ function UnifiedSignUp() {
      <div className="auth-container">
       <div className="auth-card">
 
+        <img src={logo} alt="CampusAura logo" className="auth-logo" />
         <h1>CampusAura</h1>
         <h2>Create Account</h2>
         <p>Select your user type to continue</p>

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../firebase/firebaseConfig';
 import { useNavigate, Link } from "react-router-dom";
+import logo from '../assets/logo.jpeg';
 import './AuthenticationPages.css';
 
 
@@ -28,6 +29,7 @@ function Login() {
     return (
         <div className='auth-container'>
             <div className='auth-card'>
+                <img src={logo} alt="CampusAura logo" className="auth-logo" />
                 <h1>CampusAura</h1>
                 <h2>User Login</h2>
                 <p>Sign in to access your student portal</p>
