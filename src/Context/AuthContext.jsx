@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { auth } from "../Firebase/firebaseConfig";
+import { auth } from "../firebase/firebaseConfig";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
 const AuthContext = createContext();
@@ -13,35 +13,42 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user role from backend
-  const fetchUserRole = async (uid) => {
+  // Fetch user data from backend
+  const fetchUserData = async (user) => {
+    if (!user) {
+      setUserData(null);
+      setUserRole(null);
+      return;
+    }
+
     try {
-      const user = auth.currentUser;
-      if (!user) {
-        throw new Error('No authenticated user');
-      }
-      
-      // 🔑 Get Firebase ID token
       const token = await user.getIdToken();
-      
-      const response = await fetch(`${API_BASE_URL}/api/user/${uid}`, {
+      const response = await fetch(`${API_BASE_URL}/api/user/me`, {
+        method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch user data');
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ User data fetched:', data);
+        console.log('✅ User role:', data.role);
+        setUserData(data);
+        setUserRole(data.role); // ADMIN, STUDENT, COORDINATOR, EXTERNAL_USER
+      } else {
+        console.error('❌ Failed to fetch user data:', response.status);
+        setUserData(null);
+        setUserRole(null);
       }
-      const userData = await response.json();
-      setUserRole(userData.role);
-      return userData.role;
     } catch (error) {
-      console.error('Error fetching user role:', error);
+      console.error('Error fetching user data:', error);
+      setUserData(null);
       setUserRole(null);
-      return null;
     }
   };
 
@@ -50,9 +57,9 @@ export function AuthProvider({ children }) {
       setCurrentUser(user);
       
       if (user) {
-        // Fetch user role when user is authenticated
-        await fetchUserRole(user.uid);
+        await fetchUserData(user);
       } else {
+        setUserData(null);
         setUserRole(null);
       }
       
@@ -63,15 +70,27 @@ export function AuthProvider({ children }) {
   }, []);
 
   const logout = async () => {
+    setUserData(null);
     setUserRole(null);
     return signOut(auth);
+  };
+
+  const refreshUserData = async () => {
+    if (currentUser) {
+      await fetchUserData(currentUser);
+    }
   };
 
   const value = {
     currentUser,
     userRole,
-    fetchUserRole,
+    userData,
     logout,
+    refreshUserData,
+    isAdmin: userRole === 'ADMIN',
+    isCoordinator: userRole === 'COORDINATOR',
+    isStudent: userRole === 'STUDENT',
+    isExternalUser: userRole === 'EXTERNAL_USER',
   };
 
   return (

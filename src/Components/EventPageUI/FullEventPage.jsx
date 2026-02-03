@@ -11,30 +11,31 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch events from API when category or sort changes
-  useEffect(() => {
-    const loadEvents = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await fetchPublicEvents(selectedCategory, sort);
-        setEvents(data);
-      } catch (err) {
-        console.error('Failed to load events:', err);
-        setError('Failed to load events. Please try again later.');
-        setEvents([]);
-      } finally {
-        setLoading(false);
+  // 🔍 Filter Logic
+  const filteredEvents = eventsData
+    .filter((event) =>
+      event.title.toLowerCase().includes(search.toLowerCase())
+    )
+    .filter((event) =>
+      selectedCategory === "All"
+        ? true
+        : event.category === selectedCategory
+    )
+    .sort((a, b) => {
+      const parseEventDate = (dateStr) => {
+        // Fix format "March 15, 2025 | 9.00 AM" -> "March 15, 2025 9:00 AM"
+        return new Date(dateStr.replace(" |", "").replace(".", ":"));
+      };
+
+      if (sort === "upcoming") {
+        return parseEventDate(a.date) - parseEventDate(b.date);
+      } else if (sort === "newest") {
+        return parseEventDate(b.date) - parseEventDate(a.date);
+      } else if (sort === "popular") {
+        return b.attending - a.attending;
       }
-    };
-
-    loadEvents();
-  }, [selectedCategory, sort]);
-
-  // 🔍 Filter Logic - only filter by search, API handles category and sort
-  const filteredEvents = events.filter((event) =>
-    event.title.toLowerCase().includes(search.toLowerCase())
-  );
+      return 0;
+    });
 
   return (
     <>
