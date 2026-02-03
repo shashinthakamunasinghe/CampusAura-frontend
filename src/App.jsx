@@ -29,6 +29,10 @@ import ContactUs from "./Components/LandingPage/ContactUs.jsx";
 import FullEventPage from "./Components/EventPageUI/FullEventPage.jsx";
 import EventDetails from "./Components/EventPageUI/EventDetail.jsx";
 
+/* Profile */
+import Profile from "./Profile";
+import Cart from "./Components/Cart";
+
 function Home() {
   return (
     <>
@@ -130,6 +134,18 @@ function App() {
             <>
               <Navbar />
               <MarketplaceFull />
+              <Footer />
+            </>
+          }
+        />
+        <Route path="/cart" element={<Cart />} />
+
+        <Route
+          path="/profile"
+          element={
+            <>
+              <Navbar />
+              <Profile />
               <Footer />
             </>
           }
