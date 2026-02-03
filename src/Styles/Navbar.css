@@ -17,20 +17,19 @@
   gap: 0.75rem;
 }
 
+.navbar-logo {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+}
+
 .logo {
-  width: 40px;
-  height: 40px;
-  background-color: #4a90e2;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 1.2rem;
+  display: none;
 }
 
 .brand {
+  display: none;
   font-size: 1.5rem;
   font-weight: 600;
   color: #333;

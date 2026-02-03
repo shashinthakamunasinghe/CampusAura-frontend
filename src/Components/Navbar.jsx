@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import "../Styles/Navbar.css";
+import logo from "../assets/1.png";
 
 import { useAuth } from "../Context/AuthContext";
 import { MdAccountCircle, MdShoppingCart } from "react-icons/md";
@@ -29,8 +30,7 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="nav-left">
-        <div className="logo">CH</div>
-        <span className="brand">Campus Aura</span>
+        <img src={logo} alt="Campus Aura Logo" className="navbar-logo" />
       </div>
 
       <ul className="nav-links">
