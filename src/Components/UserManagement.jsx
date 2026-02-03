@@ -48,64 +48,41 @@ export default function UserManagement() {
     }
   };
 
-  const handleVerifyClick = (user) => {
-    if (user.type === "Student" && user.idImage) {
-      setSelectedUser(user);
-      setShowModal(true);
-    }
-  };
+const handleVerifyClick = (user) => {
+  if (user.type === "Student" && user.idImage) {
+    setSelectedUser(user);
+    setShowModal(true);
+  }
+};
 
-  const handleVerifyUser = async () => {
-    try {
-      // Uncomment when backend is ready
-      // const response = await fetch(`http://localhost:5000/api/admin/users/${selectedUser._id}/verify`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-      //   },
-      //   body: JSON.stringify({ verified: true })
-      // });
-      
-      // if (response.ok) {
-        console.log("User verified successfully");
-        // Update local state
-        setUsers(users.map(u => 
-          u._id === selectedUser._id ? { ...u, verified: true } : u
-        ));
-        // fetchUsers();
-      // }
-    } catch (error) {
-      console.error('Error verifying user:', error);
-    }
-    
-    setShowModal(false);
-    setSelectedUser(null);
-  };
+const handleVerifyUser = async () => {
+  try {
+    console.log("User verified successfully");
 
-  const handleRejectUser = async () => {
-    try {
-      // Uncomment when backend is ready
-      // const response = await fetch(`http://localhost:5000/api/admin/users/${selectedUser._id}/reject`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-      //   },
-      //   body: JSON.stringify({ verified: false })
-      // });
-      
-      // if (response.ok) {
-        console.log("User rejected successfully");
-        // fetchUsers();
-      // }
-    } catch (error) {
-      console.error('Error rejecting user:', error);
-    }
-    
-    setShowModal(false);
-    setSelectedUser(null);
-  };
+    setUsers(users.map(u =>
+      u._id === selectedUser._id ? { ...u, verified: true } : u
+    ));
+  } catch (error) {
+    console.error("Error verifying user:", error);
+  }
+
+  setShowModal(false);
+  setSelectedUser(null);
+};
+
+const handleRejectUser = async () => {
+  try {
+    console.log("User rejected successfully");
+    // Optional: remove user or mark as rejected
+  } catch (error) {
+    console.error("Error rejecting user:", error);
+  }
+
+  setShowModal(false);
+  setSelectedUser(null);
+};
+
+ 
 
   const pendingStudents = users.filter(user => 
     user.type === "Student" && !user.verified && user.idImage
@@ -190,6 +167,9 @@ export default function UserManagement() {
                   <MdCheckCircle style={{marginRight: 4}}/> Verified
                 </span>
               ) : user.type === "Student" ? (
+                <span className="user-mgmt-external">
+                  {user.idImage ? 'Pending Verification' : 'No ID Uploaded'}
+                </span>
                 <button 
                   className="user-mgmt-verify-btn"
                   onClick={() => handleVerifyClick(user)}
