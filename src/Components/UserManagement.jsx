@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MdCheckCircle } from "react-icons/md";
+import { MdCheckCircle, MdClose } from "react-icons/md";
 import "../Styles/UserManagement.css";
 
 const stats = [
@@ -22,6 +22,8 @@ function getInitials(name) {
 }
 
 export default function UserManagement() {
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const [users, setUsers] = useState(mockUsers);
   const [loading, setLoading] = useState(false);
 
@@ -46,25 +48,41 @@ export default function UserManagement() {
     }
   };
 
-  const handleVerifyUser = async (user) => {
-    try {
-      console.log("User verified successfully");
-      setUsers(users.map(u => 
-        u._id === user._id ? { ...u, verified: true } : u
-      ));
-    } catch (error) {
-      console.error('Error verifying user:', error);
-    }
-  };
+const handleVerifyClick = (user) => {
+  if (user.type === "Student" && user.idImage) {
+    setSelectedUser(user);
+    setShowModal(true);
+  }
+};
 
-  const handleRejectUser = async (user) => {
-    try {
-      console.log("User rejected successfully");
-      // You can add logic to remove or update the user
-    } catch (error) {
-      console.error('Error rejecting user:', error);
-    }
-  };
+const handleVerifyUser = async () => {
+  try {
+    console.log("User verified successfully");
+
+    setUsers(users.map(u =>
+      u._id === selectedUser._id ? { ...u, verified: true } : u
+    ));
+  } catch (error) {
+    console.error("Error verifying user:", error);
+  }
+
+  setShowModal(false);
+  setSelectedUser(null);
+};
+
+const handleRejectUser = async () => {
+  try {
+    console.log("User rejected successfully");
+    // Optional: remove user or mark as rejected
+  } catch (error) {
+    console.error("Error rejecting user:", error);
+  }
+
+  setShowModal(false);
+  setSelectedUser(null);
+};
+
+ 
 
   const pendingStudents = users.filter(user => 
     user.type === "Student" && !user.verified && user.idImage
@@ -98,7 +116,11 @@ export default function UserManagement() {
                     src={user.idImage} 
                     alt={`${user.name} Student ID`}
                     className="user-mgmt-id-thumbnail"
+                    onClick={() => handleVerifyClick(user)}
                   />
+                  <div className="user-mgmt-id-overlay" onClick={() => handleVerifyClick(user)}>
+                    Click to review
+                  </div>
                 </div>
                 <div className="user-mgmt-id-card-info">
                   <div className="user-mgmt-id-card-name">{user.name}</div>
@@ -110,15 +132,18 @@ export default function UserManagement() {
                 <div className="user-mgmt-id-card-actions">
                   <button 
                     className="user-mgmt-id-reject-btn"
-                    onClick={() => handleRejectUser(user)}
+                    onClick={() => {
+                      setSelectedUser(user);
+                      handleRejectUser();
+                    }}
                   >
                     Reject
                   </button>
                   <button 
                     className="user-mgmt-id-verify-btn"
-                    onClick={() => handleVerifyUser(user)}
+                    onClick={() => handleVerifyClick(user)}
                   >
-                    Verify & Approve
+                    Review & Verify
                   </button>
                 </div>
               </div>
@@ -145,6 +170,13 @@ export default function UserManagement() {
                 <span className="user-mgmt-external">
                   {user.idImage ? 'Pending Verification' : 'No ID Uploaded'}
                 </span>
+                <button 
+                  className="user-mgmt-verify-btn"
+                  onClick={() => handleVerifyClick(user)}
+                  disabled={!user.idImage}
+                >
+                  {user.idImage ? 'Verify ID' : 'No ID Uploaded'}
+                </button>
               ) : (
                 <span className="user-mgmt-external">External User</span>
               )}
@@ -152,6 +184,54 @@ export default function UserManagement() {
           </div>
         ))}
       </div>
+
+      {showModal && selectedUser && (
+        <div className="user-mgmt-modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="user-mgmt-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="user-mgmt-modal-header">
+              <h2>Verify Student ID</h2>
+              <button 
+                className="user-mgmt-modal-close"
+                onClick={() => setShowModal(false)}
+              >
+                <MdClose size={24} />
+              </button>
+            </div>
+            <div className="user-mgmt-modal-body">
+              <div className="user-mgmt-modal-user-info">
+                <p><strong>Name:</strong> {selectedUser.name}</p>
+                <p><strong>Email:</strong> {selectedUser.email}</p>
+                <p><strong>Type:</strong> {selectedUser.type}</p>
+                {selectedUser.studentId && <p><strong>Student ID:</strong> {selectedUser.studentId}</p>}
+              </div>
+              <div className="user-mgmt-modal-id-image">
+                <img 
+                  src={selectedUser.idImage} 
+                  alt={`${selectedUser.name} Student ID`}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://via.placeholder.com/400x250?text=Image+Not+Found';
+                  }}
+                />
+              </div>
+            </div>
+            <div className="user-mgmt-modal-actions">
+              <button 
+                className="user-mgmt-reject-btn"
+                onClick={handleRejectUser}
+              >
+                Reject
+              </button>
+              <button 
+                className="user-mgmt-approve-btn"
+                onClick={handleVerifyUser}
+              >
+                Verify & Approve
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

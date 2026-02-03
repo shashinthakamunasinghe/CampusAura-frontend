@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { CiSearch } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
 import "../../Styles/MarketplaceFull.css";
 
-// Demo product data (expand as needed)
 const demoProducts = [
   {
     id: 1,
@@ -32,7 +32,7 @@ const demoProducts = [
     price: 35,
     category: "Tech",
     condition: "Like New",
-    images: ["/src/assets/Slant-4.webp"],
+    images: ["/images/market3.jpg"],
     description: "Ergonomic laptop stand, adjustable height.",
     seller: { name: "Jordan T.", rating: 4.7, reviews: 18 },
     badge: "Tech"
@@ -43,50 +43,63 @@ const demoProducts = [
     price: 52,
     category: "Accessories",
     condition: "New",
-    images: ["/src/assets/Slant-4.webp"],
+    images: ["/images/market4.jpg"],
     description: "Travel-size backpack, fits all essentials.",
     seller: { name: "Casey R.", rating: 4.6, reviews: 15 },
     badge: "Accessories"
-  },
+  }
 ];
 
 const categories = ["All", "Books", "Dorm", "Tech", "Accessories"];
-const sortOptions = [
-  { value: "relevance", label: "Relevance" },
-  { value: "priceLow", label: "Price: Low to High" },
-  { value: "priceHigh", label: "Price: High to Low" },
-];
-
 
 export default function MarketplaceFull() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [priceRange, setPriceRange] = useState([0, 100]);
-  const [sortBy, setSortBy] = useState("relevance");
   const [modalProduct, setModalProduct] = useState(null);
+  const navigate = useNavigate();
 
-  // Filter and sort logic
+  const addToCart = (product) => {
+    const savedCart = localStorage.getItem('cart');
+    const cart = savedCart ? JSON.parse(savedCart) : [];
+    const existingItem = cart.find(item => item.id === product.id);
+    
+    let updatedCart;
+    if (existingItem) {
+      updatedCart = cart.map(item =>
+        item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+      );
+    } else {
+      updatedCart = [...cart, {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.images[0],
+        seller: product.seller.name,
+        quantity: 1
+      }];
+    }
+
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    setModalProduct(null);
+    navigate('/cart');
+  };
+
   let filtered = demoProducts.filter((p) => {
     const inCategory = selectedCategory === "All" || p.category === selectedCategory;
     const inPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
-    const inSearch = search === "" || p.name.toLowerCase().includes(search.toLowerCase()) || p.description.toLowerCase().includes(search.toLowerCase());
+    const inSearch = search === "" || p.name.toLowerCase().includes(search.toLowerCase());
     return inCategory && inPrice && inSearch;
   });
-  if (sortBy === "priceLow") filtered = filtered.sort((a, b) => a.price - b.price);
-  if (sortBy === "priceHigh") filtered = filtered.sort((a, b) => b.price - a.price);
 
   return (
     <section className="marketplacefull-section">
-      {/* Hero Banner */}
       <div className="marketplacefull-hero">
         <h1>Campus Marketplace</h1>
         <div className="marketplacefull-hero-desc">Buy and sell with verified students. New and used items from textbooks to dorm essentials.</div>
       </div>
 
-
-      {/* Filter Section: Search, Categories, Price, Sort (stacked, like event page) */}
       <div className="marketplacefull-filters-stacked">
-        {/* Search Bar */}
         <div className="search-wrapper">
           <CiSearch className="search-icon" />
           <input
@@ -94,11 +107,10 @@ export default function MarketplaceFull() {
             placeholder="Search products..."
             className="search-input"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
-        {/* Categories */}
         <div className="category-list">
           <span className="text">Category</span>
           {categories.map(cat => (
@@ -106,11 +118,12 @@ export default function MarketplaceFull() {
               key={cat}
               className={`category-btn${selectedCategory === cat ? " active" : ""}`}
               onClick={() => setSelectedCategory(cat)}
-            >{cat}</button>
+            >
+              {cat}
+            </button>
           ))}
         </div>
 
-        {/* Price Range & Sort (aligned in one row) */}
         <div className="marketplacefull-bottom-row">
           <div className="marketplacefull-price-sort-group">
             <span className="marketplacefull-label">Price:</span>
@@ -119,7 +132,7 @@ export default function MarketplaceFull() {
               min={0}
               max={priceRange[1]}
               value={priceRange[0]}
-              onChange={e => setPriceRange([+e.target.value, priceRange[1]])}
+              onChange={(e) => setPriceRange([+e.target.value, priceRange[1]])}
               className="marketplacefull-input"
             />
             <span className="marketplacefull-label" style={{margin: '0 4px'}}>-</span>
@@ -128,31 +141,16 @@ export default function MarketplaceFull() {
               min={priceRange[0]}
               max={1000}
               value={priceRange[1]}
-              onChange={e => setPriceRange([priceRange[0], +e.target.value])}
+              onChange={(e) => setPriceRange([priceRange[0], +e.target.value])}
               className="marketplacefull-input"
             />
-          </div>
-          <div className="marketplacefull-price-sort-group">
-            <label className="marketplacefull-label" htmlFor="marketplacefull-sort">Sort by</label>
-            <select
-              id="marketplacefull-sort"
-              value={sortBy}
-              onChange={e => setSortBy(e.target.value)}
-              className="marketplacefull-input"
-            >
-              {sortOptions.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
           </div>
         </div>
       </div>
 
-      {/* Product Grid */}
       <div className="marketplacefull-grid">
         {filtered.map((item) => (
           <div className="marketplacefull-card" key={item.id}>
-            {/* Badge */}
             <div className="marketplacefull-badges-single">
               <span className="marketplacefull-badge-single">{item.badge}</span>
             </div>
@@ -174,13 +172,11 @@ export default function MarketplaceFull() {
         ))}
       </div>
 
-      {/* Product Detail Modal */}
       {modalProduct && (
         <div className="marketplacefull-modal-bg" onClick={() => setModalProduct(null)}>
-          <div className="marketplacefull-modal" onClick={e => e.stopPropagation()}>
+          <div className="marketplacefull-modal" onClick={(e) => e.stopPropagation()}>
             <button className="marketplacefull-modal-close" onClick={() => setModalProduct(null)}>&times;</button>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              {/* Image carousel (simple) */}
               <img className="marketplacefull-modal-img" src={modalProduct.images[0]} alt={modalProduct.name} />
               <div className="marketplacefull-modal-title">{modalProduct.name}</div>
               <p className="marketplacefull-modal-price">${modalProduct.price}</p>
@@ -188,7 +184,10 @@ export default function MarketplaceFull() {
               <div className="marketplacefull-modal-seller">
                 Seller: {modalProduct.seller.name} <span style={{color:'#1db89a'}}>★ {modalProduct.seller.rating}</span>
               </div>
-              <button className="marketplacefull-modal-addcart">
+              <button 
+                className="marketplacefull-modal-addcart"
+                onClick={() => addToCart(modalProduct)}
+              >
                 Add to Cart
               </button>
             </div>
