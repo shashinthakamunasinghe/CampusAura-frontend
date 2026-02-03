@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 
 /* Auth */
 import Login from "./AuthenticationUI/login.jsx";
@@ -10,6 +10,10 @@ import UnifiedSignUp from "./AuthenticationUI/UniFiedSignUp";
 /* Layout */
 import Navbar from "./Components/Navbar.jsx";
 import Footer from "./Components/LandingPage/Footer.jsx";
+
+/* Protected Routes */
+import { AdminRoute, ClientRoute, PublicRoute } from "./Components/ProtectedRoute.jsx";
+import RoleDebugger from "./Components/RoleDebugger.jsx";
 
 /* Admin */
 import AdminTopBar from "./Components/Admin.jsx";
@@ -29,6 +33,9 @@ import ContactUs from "./Components/LandingPage/ContactUs.jsx";
 import FullEventPage from "./Components/EventPageUI/FullEventPage.jsx";
 import EventDetails from "./Components/EventPageUI/EventDetail.jsx";
 
+/* Auth Context */
+import { useAuth } from "./Context/AuthContext";
+
 function Home() {
   return (
     <>
@@ -44,100 +51,139 @@ function Home() {
 }
 
 function App() {
+  const { currentUser, userRole, isAdmin } = useAuth();
+
+  console.log('🚀 App render:', { 
+    authenticated: !!currentUser, 
+    userRole, 
+    isAdmin 
+  });
+
   return (
     <>
+      
       <Routes>
-        {/* Public pages */}
+        {/* Home page - Admins are redirected to admin dashboard */}
         <Route
           path="/"
           element={
-            <>
-              <Navbar />
-              <Home />
-              <Footer />
-            </>
+            isAdmin ? (
+              <Navigate to="/admin" replace />
+            ) : (
+              <>
+                <Navbar />
+                <Home />
+                <Footer />
+              </>
+            )
           }
         />
 
-        {/* Auth pages */}
+        {/* Auth pages - redirect if already logged in */}
         <Route
           path="/login"
           element={
-            <>
+            <PublicRoute redirectAuthenticated={true}>
               <Navbar />
               <Login />
               <Footer />
-            </>
+            </PublicRoute>
           }
         />
         <Route
           path="/register"
           element={
-            <>
+            <PublicRoute redirectAuthenticated={true}>
               <Navbar />
               <Register />
               <Footer />
-            </>
+            </PublicRoute>
           }
         />
         <Route
           path="/signup"
           element={
-            <>
+            <PublicRoute redirectAuthenticated={true}>
               <Navbar />
               <UnifiedSignUp />
               <Footer />
-            </>
+            </PublicRoute>
           }
         />
         <Route
           path="/signup/user"
           element={
-            <>
+            <PublicRoute redirectAuthenticated={true}>
               <Navbar />
               <NormalUserSignUp />
               <Footer />
-            </>
+            </PublicRoute>
           }
         />
 
-        {/* Event pages */}
+        {/* Event pages - Only for non-admin users (STUDENT, COORDINATOR, EXTERNAL_USER) */}
         <Route
           path="/events"
           element={
-            <>
+            <ClientRoute>
               <Navbar />
               <FullEventPage />
               <Footer />
-            </>
+            </ClientRoute>
           }
         />
         <Route
           path="/events/:id"
           element={
-            <>
+            <ClientRoute>
               <Navbar />
               <EventDetails />
               <Footer />
-            </>
+            </ClientRoute>
           }
         />
 
-        {/* Marketplace full page */}
+        {/* Marketplace full page - Only for non-admin users */}
         <Route
           path="/marketplace"
           element={
-            <>
+            <ClientRoute>
               <Navbar />
               <MarketplaceFull />
               <Footer />
-            </>
+            </ClientRoute>
           }
         />
 
-        {/* Admin pages (no Navbar/Footer) */}
-        <Route path="/admin" element={<AdminTopBar />} />
-        <Route path="/test-events" element={<EventManagement />} />
+        {/* Admin pages - Only for ADMIN role (no Navbar/Footer) */}
+        <Route 
+          path="/admin" 
+          element={
+            <AdminRoute>
+              <AdminTopBar />
+            </AdminRoute>
+          } 
+        />
+        <Route 
+          path="/test-events" 
+          element={
+            <AdminRoute>
+              <EventManagement />
+            </AdminRoute>
+          } 
+        />
+
+        {/* Catch all - redirect based on authentication */}
+        <Route
+          path="*"
+          element={
+            currentUser ? (
+              isAdmin ? <Navigate to="/admin" replace /> : <Navigate to="/" replace />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
       </Routes>
     </>
   );

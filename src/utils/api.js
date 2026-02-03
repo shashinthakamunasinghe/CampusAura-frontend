@@ -89,3 +89,59 @@ export const completeExternalUserRegistration = async (token, userData) => {
     throw error;
   }
 };
+
+/**
+ * Get current user data from backend
+ * @param {string} token - Firebase ID token
+ * @returns {Promise<Object>} User data including role
+ */
+export const getCurrentUser = async (token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/user/me`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch user data');
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Get current user error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get user session information
+ * @param {string} token - Firebase ID token
+ * @returns {Promise<Object>} Session information
+ */
+export const getSession = async (token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/session`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch session');
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Get session error:', error);
+    throw error;
+  }
+};
