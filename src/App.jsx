@@ -2,10 +2,10 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 
 /* Auth */
-import Login from "./AuthenticationUI/login";
-import Register from "./AuthenticationUI/register";
-import NormalUserSignUp from "./AuthenticationUI/SignUp";
-import UnifiedSignUp from "./AuthenticationUI/UnifiedSignUp";
+import Login from "./AuthenticationUI/login.jsx";
+import Register from "./AuthenticationUI/studentRegister.jsx";
+import NormalUserSignUp from "./AuthenticationUI/externalRegister.jsx";
+import UnifiedSignUp from "./AuthenticationUI/UniFiedSignUp";
 
 /* Layout */
 import Navbar from "./Components/Navbar.jsx";
