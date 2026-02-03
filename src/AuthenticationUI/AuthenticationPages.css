@@ -33,11 +33,10 @@ body {
 
 .auth-logo{
     display: block;
-    width: 140px;
+    width: 160px;
     height: auto;
     margin: 0 auto 12px auto;
     background-color: transparent;
-    mix-blend-mode: multiply;
 }
 
 /* Header Styles */
