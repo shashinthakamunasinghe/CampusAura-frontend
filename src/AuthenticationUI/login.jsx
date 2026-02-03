@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../firebase/firebaseConfig';
 import { useNavigate, Link } from "react-router-dom";
+import logo from '../assets/logo.png';
 import './AuthenticationPages.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
@@ -72,7 +73,8 @@ function Login() {
     return (
         <div className='auth-container'>
             <div className='auth-card'>
-                <h1>CampusAura</h1>
+                <img src={logo} alt="CampusAura logo" className="auth-logo" />
+                 
                 <h2>User Login</h2>
                 <p>Sign in to access your student portal</p>
 

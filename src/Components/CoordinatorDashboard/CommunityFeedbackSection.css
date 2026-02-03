@@ -1,0 +1,166 @@
+/* COMMUNITY FEEDBACK CONTAINER */
+.community-feedback-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.community-header {
+  margin-bottom: 32px;
+}
+
+.community-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #0f172a;
+}
+
+.community-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* COMMUNITY CONTENT */
+.community-content {
+  max-width: 100%;
+}
+
+.community-section-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  color: #0f172a;
+}
+
+/* RECENT COMMENTS SECTION */
+.recent-comments {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.comments-header {
+  margin-bottom: 32px;
+}
+
+.comments-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+}
+
+.comments-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* COMMENTS LIST */
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.comment-item {
+  padding: 24px 0;
+  border-bottom: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-item:hover {
+  background-color: #f8fafc;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.comment-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.comment-time {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0 0 12px 0;
+}
+
+.comment-text {
+  font-size: 15px;
+  color: #475569;
+  margin: 0 0 16px 0;
+  line-height: 1.6;
+}
+
+/* COMMENT ACTIONS */
+.comment-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.comment-delete-btn,
+.comment-respond-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #475569;
+}
+
+.comment-delete-btn:hover {
+  background-color: #fee2e2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+.comment-respond-btn:hover {
+  background-color: #f0f9ff;
+  border-color: #0284c7;
+  color: #0284c7;
+}
+
+.comment-delete-btn svg,
+.comment-respond-btn svg {
+  font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .comment-actions {
+    flex-direction: column;
+  }
+
+  .comment-delete-btn,
+  .comment-respond-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .recent-comments {
+    padding: 16px;
+  }
+}

@@ -18,6 +18,7 @@ import RoleDebugger from "./Components/RoleDebugger.jsx";
 /* Admin */
 import AdminTopBar from "./Components/Admin.jsx";
 import EventManagement from "./Components/EventManagement";
+import CoordinatorDashboard from "./Components/CoordinatorDashboard/CoordinatorDashboard.jsx";
 
 /* Landing Page */
 import HeroSlider from "./Components/LandingPage/HeroSlider.jsx";
@@ -35,6 +36,9 @@ import EventDetails from "./Components/EventPageUI/EventDetail.jsx";
 
 /* Auth Context */
 import { useAuth } from "./Context/AuthContext";
+/* Profile */
+import Profile from "./Profile";
+import Cart from "./Components/Cart";
 
 function Home() {
   return (
@@ -154,6 +158,18 @@ function App() {
             </ClientRoute>
           }
         />
+        <Route path="/cart" element={<Cart />} />
+
+        <Route
+          path="/profile"
+          element={
+            <>
+              <Navbar />
+              <Profile />
+              <Footer />
+            </>
+          }
+        />
 
         {/* Admin pages - Only for ADMIN role (no Navbar/Footer) */}
         <Route 
@@ -184,6 +200,10 @@ function App() {
             )
           }
         />
+        {/* Admin pages (no Navbar/Footer) */}
+        <Route path="/admin" element={<AdminTopBar />} />
+        <Route path="/coordinator" element={<CoordinatorDashboard />} />
+        <Route path="/test-events" element={<EventManagement />} />
       </Routes>
     </>
   );
