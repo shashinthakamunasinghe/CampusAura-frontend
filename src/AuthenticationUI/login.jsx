@@ -4,24 +4,60 @@ import { auth } from '../Firebase/firebaseConfig';
 import { useNavigate, Link } from "react-router-dom";
 import './AuthenticationPages.css';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 function Login() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
+        setLoading(true);
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            navigate('/');
+            // Sign in with Firebase
+            const userCredential = await signInWithEmailAndPassword(
+                auth, 
+                email.trim(), 
+                password.trim()
+            );
+            
+            const user = userCredential.user;
+            const uid = user.uid;
+            
+            // 🔑 Get Firebase ID token
+            const idToken = await user.getIdToken();
+
+            // Fetch user role from backend with Authorization header
+            const response = await fetch(`${API_BASE_URL}/api/users/${uid}`, {
+                headers: {
+                    'Authorization': `Bearer ${idToken}`,
+                },
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+
+            const userData = await response.json();
+
+            // Navigate based on role
+            if (userData.role === "ADMIN") {
+                navigate('/admin');
+            } else {
+                navigate('/');
+            }
         } catch (err) {
-            setError(err.message);
+            console.error('Login error:', err);
+            setError(err.message || 'Failed to login. Please check your credentials.');
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -48,7 +84,9 @@ function Login() {
                     <input type="password" id="password" value={password} placeholder='Enter Your password' onChange={(e) => setPassword(e.target.value)} required /><br /><br />
 
                     {/* Login button */}
-                    <button type="submit">Login</button><br /><br />
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Logging in...' : 'Login'}
+                    </button><br /><br />
 
                     <div className='auth-Link'>
                         <p>Don't have an account? <Link to="/SignUp">Sign Up</Link></p>

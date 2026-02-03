@@ -104,3 +104,59 @@
   }
 }
 
+/* Loading State */
+.slider-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px;
+  font-size: 18px;
+  color: #64748b;
+}
+
+/* Event Info Badges */
+.slide-venue,
+.slide-department {
+  display: inline-block;
+  margin-top: 12px;
+  margin-right: 16px;
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 6px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+/* Navigation Dots */
+.slider-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 2;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.dot:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+  transform: scale(1.2);
+}
+
+.dot.active {
+  background-color: #ffffff;
+  width: 30px;
+  border-radius: 6px;
+}
+

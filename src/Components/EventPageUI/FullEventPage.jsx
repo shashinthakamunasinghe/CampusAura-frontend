@@ -1,79 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EventFilter from "./EventFilter";
 import EventsGrid from "./EventGrid";
-
-const eventsData = [
-  {
-    id: 1,
-    title: "Tech Innovation Summit 2025",
-    date: "March 15, 2025 | 9.00 AM",
-    location: "Main Campus Auditorium",
-    category: "Technology",
-    attending: 320,
-    image: "https://via.placeholder.com/400x200",
-  },
-  {
-    id: 2,
-    title: "Spring Career Fair",
-    date: "March 20, 2025 | 10.00 AM",
-    location: "Student Center",
-    category: "Career",
-    attending: 320,
-    image: "https://via.placeholder.com/400x200",
-  },
-  {
-    id: 3,
-    title: "Cultural Festival Night",
-    date: "March 28, 2025 | 6.00 PM",
-    location: "Open Grounds",
-    category: "Culture",
-    attending: 320,
-    image: "https://via.placeholder.com/400x200",
-  },
-  {
-    id: 4,
-    title: "Tech Innovation Summit 2025",
-    date: "March 15, 2025 | 9.00 AM",
-    location: "Main Campus Auditorium",
-    category: "Technology",
-    attending: 320,
-    image: "https://via.placeholder.com/400x200",
-  },
-  {
-    id: 5,
-    title: "Spring Career Fair",
-    date: "March 20, 2025 | 10.00 AM",
-    location: "Student Center",
-    category: "Career",
-    attending: 320,
-    image: "https://via.placeholder.com/400x200",
-  },
-  {
-    id: 6,
-    title: "Cultural Festival Night",
-    date: "March 28, 2025 | 6.00 PM",
-    location: "Open Grounds",
-    category: "Culture",
-    attending: 320,
-    image: "https://via.placeholder.com/400x200",
-  },
-];
+import { fetchPublicEvents } from "../../api/api";
 
 export default function EventsPage() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sort, setSort] = useState("upcoming");
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // 🔍 Filter Logic
-  const filteredEvents = eventsData
-    .filter((event) =>
-      event.title.toLowerCase().includes(search.toLowerCase())
-    )
-    .filter((event) =>
-      selectedCategory === "All"
-        ? true
-        : event.category === selectedCategory
-    );
+  // Fetch events from API when category or sort changes
+  useEffect(() => {
+    const loadEvents = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await fetchPublicEvents(selectedCategory, sort);
+        setEvents(data);
+      } catch (err) {
+        console.error('Failed to load events:', err);
+        setError('Failed to load events. Please try again later.');
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEvents();
+  }, [selectedCategory, sort]);
+
+  // 🔍 Filter Logic - only filter by search, API handles category and sort
+  const filteredEvents = events.filter((event) =>
+    event.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <>
@@ -86,7 +47,27 @@ export default function EventsPage() {
         setSort={setSort}
       />
 
-      <EventsGrid events={filteredEvents} />
+      {loading && (
+        <div style={{ textAlign: 'center', padding: '2rem' }}>
+          <p>Loading events...</p>
+        </div>
+      )}
+
+      {error && (
+        <div style={{ textAlign: 'center', padding: '2rem', color: 'red' }}>
+          <p>{error}</p>
+        </div>
+      )}
+
+      {!loading && !error && filteredEvents.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '2rem' }}>
+          <p>No events found.</p>
+        </div>
+      )}
+
+      {!loading && !error && filteredEvents.length > 0 && (
+        <EventsGrid events={filteredEvents} />
+      )}
     </>
   );
 }

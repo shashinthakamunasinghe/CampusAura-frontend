@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -13,6 +13,7 @@ import {
 } from 'chart.js';
 import '../Styles/AdminDashboard.css';
 import { MdEvent, MdPeople, MdHowToReg, MdShoppingBag, MdShoppingCart, MdPerson } from 'react-icons/md';
+import { fetchDashboardStats } from '../api/api';
 
 ChartJS.register(
   CategoryScale,
@@ -28,6 +29,28 @@ ChartJS.register(
 function AdminDashboard() {
   const [lineChartPeriod, setLineChartPeriod] = useState("This week");
   const [barChartPeriod, setBarChartPeriod] = useState("This week");
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch dashboard data on component mount
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchDashboardStats();
+        setDashboardData(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error loading dashboard data:', err);
+        setError('Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboardData();
+  }, []);
 
   const lineChartData = {
     labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
@@ -129,9 +152,26 @@ function AdminDashboard() {
     }
   };
 
+  // Helper function to format percentage change
+  const formatPercentageChange = (value) => {
+    if (!value) return null;
+    const sign = value >= 0 ? '↑' : '↓';
+    return `${sign} ${Math.abs(value)}%`;
+  };
+
+  // Helper function to get change class
+  const getChangeClass = (value) => {
+    if (!value) return '';
+    if (value === 0) return 'neutral';
+    return value > 0 ? 'positive' : 'negative';
+  };
+
   return (
     <div className="admin-dashboard">
       <h1 className="dashboard-title">Overview</h1>
+
+      {loading && <div className="loading-message">Loading dashboard data...</div>}
+      {error && <div className="error-message">{error}</div>}
 
       <div className="stats-grid">
         <div className="stat-card">
@@ -139,8 +179,10 @@ function AdminDashboard() {
             <MdEvent className="stat-icon" />
           </div>
           <div className="stat-header">TOTAL EVENTS</div>
-          <div className="stat-value">148</div>
-          <div className="stat-change positive">↑ 12%</div>
+          <div className="stat-value">{dashboardData?.totalEvents || 0}</div>
+          <div className={`stat-change ${getChangeClass(dashboardData?.eventsChangePercent)}`}>
+            {formatPercentageChange(dashboardData?.eventsChangePercent) || '—'}
+          </div>
         </div>
 
         <div className="stat-card">
@@ -148,8 +190,10 @@ function AdminDashboard() {
             <MdPeople className="stat-icon" />
           </div>
           <div className="stat-header">ACTIVE USERS</div>
-          <div className="stat-value">3,427</div>
-          <div className="stat-change negative">↓ 3%</div>
+          <div className="stat-value">{dashboardData?.activeUsers?.toLocaleString() || 0}</div>
+          <div className={`stat-change ${getChangeClass(dashboardData?.usersChangePercent)}`}>
+            {formatPercentageChange(dashboardData?.usersChangePercent) || '—'}
+          </div>
         </div>
 
         <div className="stat-card">
@@ -157,8 +201,10 @@ function AdminDashboard() {
             <MdShoppingBag className="stat-icon" />
           </div>
           <div className="stat-header">TOTAL PRODUCTS</div>
-          <div className="stat-value">156</div>
-          <div className="stat-change positive">↑ 8%</div>
+          <div className="stat-value">{dashboardData?.totalProducts || 0}</div>
+          <div className={`stat-change ${getChangeClass(dashboardData?.productsChangePercent)}`}>
+            {formatPercentageChange(dashboardData?.productsChangePercent) || '—'}
+          </div>
         </div>
 
         <div className="stat-card">
@@ -166,8 +212,10 @@ function AdminDashboard() {
             <MdShoppingCart className="stat-icon" />
           </div>
           <div className="stat-header">PRODUCTS SOLD</div>
-          <div className="stat-value">234</div>
-          <div className="stat-change new">New</div>
+          <div className="stat-value">{dashboardData?.productsSold || 0}</div>
+          <div className={`stat-change ${getChangeClass(dashboardData?.salesChangePercent)}`}>
+            {formatPercentageChange(dashboardData?.salesChangePercent) || 'New'}
+          </div>
         </div>
       </div>
 
@@ -221,12 +269,22 @@ function AdminDashboard() {
             <h3>Recent Events</h3>
             <a href="#" className="view-link">All events</a>
           </div>
-          <div className="event-item">
-            <div className="event-info">
-              <div className="event-name">Tech Summit 2024</div>
-              <div className="event-status">Ongoing</div>
+          {dashboardData?.recentEvents && dashboardData.recentEvents.length > 0 ? (
+            dashboardData.recentEvents.map((event, index) => (
+              <div key={index} className="event-item">
+                <div className="event-info">
+                  <div className="event-name">{event.title || event.name || 'Untitled Event'}</div>
+                  <div className="event-status">{event.status || 'Ongoing'}</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="event-item">
+              <div className="event-info">
+                <div className="event-name">No recent events</div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="bottom-card">
@@ -235,7 +293,15 @@ function AdminDashboard() {
             <a href="#" className="view-link">View report</a>
           </div>
           <div className="coordinator-list">
-            <div className="coordinator-item">John Doe - 45 events</div>
+            {dashboardData?.topCoordinators && dashboardData.topCoordinators.length > 0 ? (
+              dashboardData.topCoordinators.map((coordinator, index) => (
+                <div key={index} className="coordinator-item">
+                  {coordinator.name || `${coordinator.firstName || ''} ${coordinator.lastName || ''}`.trim()} - {coordinator.eventCount || 0} events
+                </div>
+              ))
+            ) : (
+              <div className="coordinator-item">No coordinators found</div>
+            )}
           </div>
         </div>
       </div>

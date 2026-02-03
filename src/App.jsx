@@ -14,6 +14,7 @@ import Footer from "./Components/LandingPage/Footer.jsx";
 /* Admin */
 import AdminTopBar from "./Components/Admin.jsx";
 import EventManagement from "./Components/EventManagement";
+import AdminRoute from "./Components/AdminRoute.jsx";
 
 /* Landing Page */
 import HeroSlider from "./Components/LandingPage/HeroSlider.jsx";
@@ -135,9 +136,23 @@ function App() {
           }
         />
 
-        {/* Admin pages (no Navbar/Footer) */}
-        <Route path="/admin" element={<AdminTopBar />} />
-        <Route path="/test-events" element={<EventManagement />} />
+        {/* Admin pages (protected - no Navbar/Footer) */}
+        <Route 
+          path="/admin/*" 
+          element={
+            <AdminRoute>
+              <AdminTopBar />
+            </AdminRoute>
+          } 
+        />
+        <Route 
+          path="/test-events" 
+          element={
+            <AdminRoute>
+              <EventManagement />
+            </AdminRoute>
+          } 
+        />
       </Routes>
     </>
   );
