@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Register from "./register";            // Student form
-import NormalUserSignUp from "./SignUp";      // External user form
+import StudentRegister from "./studentRegister";           
+import ExternalRegister from "./externalRegister";     
 import "./AuthenticationPages.css"; 
 
 function UnifiedSignUp() {
@@ -35,9 +35,9 @@ function UnifiedSignUp() {
 
         {/* Render forms */}
         {userType === "student" ? (
-          <Register />
+          <StudentRegister />
         ) : (
-          <NormalUserSignUp />
+          <ExternalRegister />
         )}
 
       </div>
