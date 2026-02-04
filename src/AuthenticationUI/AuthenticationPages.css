@@ -31,6 +31,14 @@ body {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
+.auth-logo{
+    display: block;
+    width: 160px;
+    height: auto;
+    margin: 0 auto 12px auto;
+    background-color: transparent;
+}
+
 /* Header Styles */
 .auth-card h1{
     color: var(--dark);

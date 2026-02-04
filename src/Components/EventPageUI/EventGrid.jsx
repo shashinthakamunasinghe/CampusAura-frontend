@@ -6,7 +6,7 @@ export default function EventsGrid({ events }) {
   
     <div className="events-grid">
       {events.map((event) => (
-        <EventCard key={event.id} event={event} />
+        <EventCard key={event.eventId} event={event} />
       ))}
     </div>
   

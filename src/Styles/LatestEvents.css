@@ -78,3 +78,21 @@
   background-color: #0a5db8;
   color: #ffffff;
 }
+
+/* Loading and error states */
+.events-loading,
+.events-error,
+.no-events {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 16px;
+  color: #64748b;
+}
+
+.events-error {
+  color: #dc2626;
+}
+
+.events-loading {
+  color: #0a5db8;
+}

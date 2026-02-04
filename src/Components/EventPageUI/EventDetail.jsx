@@ -3,186 +3,84 @@ import { CiCalendar } from "react-icons/ci";
 import { IoLocationOutline } from "react-icons/io5";
 import { BsPeople } from "react-icons/bs";
 import { AiOutlineHeart, AiOutlineShareAlt, AiOutlineSend } from "react-icons/ai";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { fetchEventById } from "../../api/api";
 import "./eventDetails.css";
 
-// Default sponsor tiers
-const DEFAULT_SPONSORS = [
-  { tier: "Platinum", amount: "$10,000+", logo: "🏢" },
-  { tier: "Gold", amount: "$5,000+", logo: "⭐" },
-  { tier: "Silver", amount: "$1,000+", logo: "🎯" },
-];
-
-// Helper function to add sponsors to events if they don't have them
-const enrichEventWithSponsors = (event) => {
-  return {
-    ...event,
-    sponsors: event.sponsors && event.sponsors.length > 0 ? event.sponsors : DEFAULT_SPONSORS,
+// Format date from API to match design
+const formatEventDate = (isoDate) => {
+  if (!isoDate) return 'Date TBA';
+  
+  const date = new Date(isoDate);
+  const options = { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
   };
+  
+  return date.toLocaleDateString('en-US', options).replace(',', ' |');
 };
 
-const eventsData = [
-  {
-    id: 1,
-    title: "Tech Innovation Summit 2025",
-    date: "March 15, 2025 | 9.00 AM",
-    location: "Main Campus Auditorium",
-    category: "Technology",
-    attending: 320,
-    image: "https://via.placeholder.com/900x400",
-    ticketsAvailable: true,
-    description:
-      "Experience an inspiring day of innovation and technology. Learn from industry leaders, explore new trends, and connect with professionals.",
-    schedule: [
-      { time: "9:00 AM", event: "Registration & Welcome" },
-      { time: "10:00 AM", event: "Keynote: Future of Tech" },
-      { time: "11:30 AM", event: "Panel Discussion" },
-      { time: "1:00 PM", event: "Lunch Break" },
-    ],
-    gallery: [
-      "https://via.placeholder.com/300x200",
-      "https://via.placeholder.com/300x200",
-      "https://via.placeholder.com/300x200",
-      "https://via.placeholder.com/300x200",
-    ],
-     
-  },
-  {
-    id: 2,
-    title: "Spring Career Fair",
-    date: "March 20, 2025 | 10.00 AM",
-    location: "Student Center",
-    category: "Career",
-    attending: 320,
-    image: "https://via.placeholder.com/900x400",
-    ticketsAvailable: true,
-    description:
-      "Meet top employers, explore job opportunities, and prepare for your future career.",
-    schedule: [
-      { time: "10:00 AM", event: "Fair Opens" },
-      { time: "11:00 AM", event: "Company Presentations" },
-      { time: "2:00 PM", event: "Networking Session" },
-    ],
-    gallery: [
-      "https://via.placeholder.com/300x200",
-      "https://via.placeholder.com/300x200",
-    ],
-    
-  },
-  {
-    id: 3,
-    title: "Cultural Festival Night",
-    date: "March 28, 2025 | 6.00 PM",
-    location: "Open Grounds",
-    category: "Culture",
-    attending: 320,
-    image: "https://via.placeholder.com/900x400",
-    ticketsAvailable: false,
-    description:
-      "Enjoy music, dance, food, and performances celebrating diverse cultures.",
-    schedule: [
-      { time: "6:00 PM", event: "Opening Ceremony" },
-      { time: "7:00 PM", event: "Cultural Performances" },
-      { time: "9:00 PM", event: "Food & Music" },
-    ],
-    gallery: [
-      "https://via.placeholder.com/300x200",
-      "https://via.placeholder.com/300x200",
-      "https://via.placeholder.com/300x200",
-    ],
-     
-  },
-  {
-    id: 4,
-    title: "Tech Innovation Summit 2025",
-    date: "March 15, 2025 | 9.00 AM",
-    location: "Main Campus Auditorium",
-    category: "Technology",
-    attending: 320,
-    image: "https://via.placeholder.com/900x400",
-    ticketsAvailable: true,
-    description:
-      "Experience an inspiring day of innovation and technology. Learn from industry leaders, explore new trends, and connect with professionals.",
-    schedule: [
-      { time: "9:00 AM", event: "Registration & Welcome" },
-      { time: "10:00 AM", event: "Keynote: Future of Tech" },
-      { time: "11:30 AM", event: "Panel Discussion" },
-      { time: "1:00 PM", event: "Lunch Break" },
-    ],
-    gallery: [
-      "https://via.placeholder.com/300x200",
-      "https://via.placeholder.com/300x200",
-      "https://via.placeholder.com/300x200",
-      "https://via.placeholder.com/300x200",
-    ],
-     
-  },
-  {
-    id: 5,
-    title: "Spring Career Fair",
-    date: "March 20, 2025 | 10.00 AM",
-    location: "Student Center",
-    category: "Career",
-    attending: 320,
-    image: "https://via.placeholder.com/900x400",
-    ticketsAvailable: true,
-    description:
-      "Meet top employers, explore job opportunities, and prepare for your future career.",
-    schedule: [
-      { time: "10:00 AM", event: "Fair Opens" },
-      { time: "11:00 AM", event: "Company Presentations" },
-      { time: "2:00 PM", event: "Networking Session" },
-    ],
-    gallery: [
-      "https://via.placeholder.com/300x200",
-      "https://via.placeholder.com/300x200",
-    ],
-     
-  },
-  {
-    id: 6,
-    title: "Cultural Festival Night",
-    date: "March 28, 2025 | 6.00 PM",
-    location: "Open Grounds",
-    category: "Culture",
-    attending: 320,
-    image: "https://via.placeholder.com/900x400",
-    ticketsAvailable: true,
-    description:
-      "Enjoy music, dance, food, and performances celebrating diverse cultures.",
-    schedule: [
-      { time: "6:00 PM", event: "Opening Ceremony" },
-      { time: "7:00 PM", event: "Cultural Performances" },
-      { time: "9:00 PM", event: "Food & Music" },
-    ],
-    gallery: [
-      "https://via.placeholder.com/300x200",
-      "https://via.placeholder.com/300x200",
-      "https://via.placeholder.com/300x200",
-    ],
-     
-  },
-];
+// Clean and validate image URL
+const getValidImageUrl = (urls) => {
+  if (!urls || urls.length === 0) return null;
+  
+  let imageUrl = urls[0];
+  
+  // Fix malformed data URI (e.g., "https:data:image/jpeg;base64,...")
+  if (imageUrl && imageUrl.startsWith('https:data:')) {
+    imageUrl = imageUrl.replace('https:', '');
+  }
+  
+  // Check if it's example.com (fake URL)
+  if (imageUrl && imageUrl.includes('example.com')) {
+    return null;
+  }
+  
+  // Validate it's a real URL or data URI
+  if (imageUrl && (imageUrl.startsWith('http') || imageUrl.startsWith('data:'))) {
+    return imageUrl;
+  }
+  
+  return null;
+};
 
 export default function EventDetails() {
   const { id } = useParams();
-  let event = eventsData.find((e) => e.id === parseInt(id));
-  
-  // Automatically enrich event with default sponsors if not provided
-  if (event) {
-    event = enrichEventWithSponsors(event);
-  }
-  
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [tickets, setTickets] = useState(1);
   const [feedback, setFeedback] = useState("");
   const [comments, setComments] = useState([
     { id: 1, name: "Sarah Smith", text: "Great event! Looking forward to it.", time: "2 hours ago" },
     { id: 2, name: "John Doe", text: "Can't wait for the keynote speech.", time: "1 hour ago" },
   ]);
-  const totalSpots = 500;
-  const availableSpots = 180;
 
-  if (!event) return <h2>Event not found</h2>;
+  useEffect(() => {
+    const loadEventDetails = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        console.log('Fetching event details for ID:', id);
+        const data = await fetchEventById(id);
+        console.log('Received event data:', data);
+        setEvent(data);
+      } catch (err) {
+        console.error('Failed to load event details:', err);
+        setError('Failed to load event details. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      loadEventDetails();
+    }
+  }, [id]);
 
   const handleAddComment = () => {
     if (feedback.trim()) {
@@ -199,6 +97,36 @@ export default function EventDetails() {
     }
   };
 
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '3rem' }}>
+        <p>Loading event details...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ textAlign: 'center', padding: '3rem', color: 'red' }}>
+        <p>{error}</p>
+        <Link to="/events" className="back-link">← Back to Events</Link>
+      </div>
+    );
+  }
+
+  if (!event) {
+    return (
+      <div style={{ textAlign: 'center', padding: '3rem' }}>
+        <h2>Event not found</h2>
+        <Link to="/events" className="back-link">← Back to Events</Link>
+      </div>
+    );
+  }
+
+  const imageUrl = getValidImageUrl(event.eventImageUrls);
+  const totalSpots = event.totalSpots || 500;
+  const availableSpots = event.availableSpots || 180;
+
   return (
     <>
       <Link to="/events" className="back-link">
@@ -208,7 +136,13 @@ export default function EventDetails() {
       <div className="event-details-wrapper">
         {/* LEFT SIDE - Image & Details (75%) */}
         <div className="event-details-left">
-          <img src={event.image} alt={event.title} className="details-banner" />
+          {imageUrl ? (
+            <img src={imageUrl} alt={event.title} className="details-banner" />
+          ) : (
+            <div className="details-banner-placeholder">
+              <span>No Image Available</span>
+            </div>
+          )}
 
           <h1>{event.title}</h1>
 
@@ -218,7 +152,7 @@ export default function EventDetails() {
               <CiCalendar className="meta-icon" />
               <div>
                 <span className="meta-label">Date & Time</span>
-                <p className="meta-value">{event.date}</p>
+                <p className="meta-value">{formatEventDate(event.dateTime)}</p>
               </div>
             </div>
 
@@ -226,7 +160,7 @@ export default function EventDetails() {
               <IoLocationOutline className="meta-icon" />
               <div>
                 <span className="meta-label">Location</span>
-                <p className="meta-value">{event.location}</p>
+                <p className="meta-value">{event.venue}</p>
               </div>
             </div>
 
@@ -234,7 +168,7 @@ export default function EventDetails() {
               <BsPeople className="meta-icon" />
               <div>
                 <span className="meta-label">Attendees</span>
-                <p className="meta-value">{event.attending} going</p>
+                <p className="meta-value">{event.attendeeCount || 0} going</p>
               </div>
             </div>
           </div>
@@ -242,49 +176,57 @@ export default function EventDetails() {
           <h3>About This Event</h3>
           <p className="details-description">{event.description}</p>
 
-          <div className="event-tags">
-            <span className="tag">Networking</span>
-            <span className="tag">Learning</span>
-            <span className="tag">Technology</span>
-            <span className="tag">Career</span>
-          </div>
+          {event.category && (
+            <div className="event-tags">
+              <span className="tag">{event.category}</span>
+              {event.organizingDepartment && (
+                <span className="tag">{event.organizingDepartment}</span>
+              )}
+            </div>
+          )}
 
           {/* Schedule Section */}
-          <section className="section-block">
-            <h3>Event Schedule</h3>
-            <div className="schedule-list">
-              {event.schedule.map((item, idx) => (
-                <div key={idx} className="schedule-item">
-                  <div className="schedule-time">{item.time}</div>
-                  <div className="schedule-event">{item.event}</div>
-                </div>
-              ))}
-            </div>
-          </section>
+          {event.schedule && event.schedule.length > 0 && (
+            <section className="section-block">
+              <h3>Event Schedule</h3>
+              <div className="schedule-list">
+                {event.schedule.map((item, idx) => (
+                  <div key={idx} className="schedule-item">
+                    <div className="schedule-time">{item.time}</div>
+                    <div className="schedule-event">{item.event}</div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Past Event Gallery */}
-          <section className="section-block">
-            <h3>Event Gallery</h3>
-            <div className="gallery-grid">
-              {event.gallery.map((image, idx) => (
-                <img key={idx} src={image} alt={`Gallery ${idx + 1}`} className="gallery-image" />
-              ))}
-            </div>
-          </section>
+          {event.galleryImages && event.galleryImages.length > 0 && (
+            <section className="section-block">
+              <h3>Event Gallery</h3>
+              <div className="gallery-grid">
+                {event.galleryImages.map((image, idx) => (
+                  <img key={idx} src={image} alt={`Gallery ${idx + 1}`} className="gallery-image" />
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Sponsorship Panel */}
-          <section className="section-block">
-            <h3>Our Sponsors</h3>
-            <div className="sponsors-grid">
-              {event.sponsors.map((sponsor, idx) => (
-                <div key={idx} className="sponsor-card">
-                  <div className="sponsor-logo">{sponsor.logo}</div>
-                  <div className="sponsor-tier">{sponsor.tier}</div>
-                  <div className="sponsor-amount">{sponsor.amount}</div>
-                </div>
-              ))}
-            </div>
-          </section>
+          {event.sponsors && event.sponsors.length > 0 && (
+            <section className="section-block">
+              <h3>Our Sponsors</h3>
+              <div className="sponsors-grid">
+                {event.sponsors.map((sponsor, idx) => (
+                  <div key={idx} className="sponsor-card">
+                    <div className="sponsor-logo">{sponsor.logo}</div>
+                    <div className="sponsor-tier">{sponsor.tier}</div>
+                    <div className="sponsor-amount">{sponsor.amount}</div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Community & Feedback Section */}
           <section className="section-block">
@@ -325,9 +267,11 @@ export default function EventDetails() {
           <div className="organizer-card">
             <h4 className="organizer-title">Organized by</h4>
             <div className="organizer-info">
-              <div className="organizer-avatar">C</div>
+              <div className="organizer-avatar">
+                {event.organizingDepartment ? event.organizingDepartment.charAt(0) : 'C'}
+              </div>
               <div>
-                <p className="organizer-name">Campus Tech Club</p>
+                <p className="organizer-name">{event.organizingDepartment || 'Campus Organization'}</p>
                 <p className="organizer-type">Campus Organization</p>
               </div>
             </div>

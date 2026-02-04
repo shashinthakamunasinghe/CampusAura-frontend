@@ -34,14 +34,9 @@ export default function Marketplace() {
 
   return (
     <section className="marketplace-section">
+      
       <div className="marketplace-header">
         <h2 className="marketplace-title">CampusAura Marketplace</h2>
-        <button
-          className="view-all-btn"
-          onClick={() => navigate("/marketplace")}
-        >
-          View All Items
-        </button>
       </div>
 
       <div className="marketplace-container">
@@ -54,6 +49,15 @@ export default function Marketplace() {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="view-all-btn-row">
+        <button
+          className="view-all-btn"
+          onClick={() => navigate("/marketplace")}
+        >
+          View All Items
+        </button>
       </div>
     </section>
   );

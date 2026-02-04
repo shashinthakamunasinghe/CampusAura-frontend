@@ -155,6 +155,18 @@ body {
   object-fit: cover;
 }
 
+.event-card-placeholder {
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+}
+
 .event-card-body {
   padding: 16px;
 }
