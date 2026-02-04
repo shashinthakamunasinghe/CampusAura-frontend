@@ -168,8 +168,18 @@
   color: white;
 }
 
+.event-status-pill.draft {
+  background-color: #f59e0b;
+  color: white;
+}
+
 .event-status-pill.approved {
   background-color: #0066cc;
+  color: white;
+}
+
+.event-status-pill.published {
+  background-color: #10b981;
   color: white;
 }
 
