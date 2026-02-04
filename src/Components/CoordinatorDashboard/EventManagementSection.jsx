@@ -9,7 +9,7 @@ function EventManagementSection() {
   const { currentUser } = useAuth();
   const [eventData, setEventData] = useState({
     eventName: 'Tech Innovation Summit 2024',
-    date: '15-06-2024',
+    date: '2024-06-15',
     venue: 'Main Auditorium',
     description: 'Join us for an exciting day of technological innovation and networking with industry leaders.',
     accountName: '',
@@ -30,6 +30,12 @@ function EventManagementSection() {
   const [showAddSchedule, setShowAddSchedule] = useState(false);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Ticket management states
+  const [ticketsEnabled, setTicketsEnabled] = useState(false);
+  const [ticketCategories, setTicketCategories] = useState([]);
+  const [showAddTicket, setShowAddTicket] = useState(false);
+  const [newTicket, setNewTicket] = useState({ categoryName: '', price: '', availableCount: '' });
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -77,8 +83,12 @@ function EventManagementSection() {
         dateTime: eventData.date, // Convert to ISO format if needed
         description: eventData.description,
         status: 'DRAFT', // Default status
-        ticketsAvailable: false,
-        ticketCategories: [],
+        ticketsAvailable: ticketsEnabled,
+        ticketCategories: ticketsEnabled ? ticketCategories.map(ticket => ({
+          categoryName: ticket.categoryName,
+          price: ticket.price,
+          availableCount: ticket.availableCount
+        })) : [],
         pastEventDetails: [],
         eventImageUrls: uploadedImages.map(img => img.url), // Array of image URLs
         sellItems: [],
@@ -136,6 +146,39 @@ function EventManagementSection() {
     const item = scheduleItems.find(i => i.id === id);
     setNewScheduleItem(item);
     setShowAddSchedule(true);
+  };
+
+  // Ticket management handlers
+  const handleAddTicketCategory = () => {
+    if (newTicket.categoryName && newTicket.price && newTicket.availableCount) {
+      const ticket = {
+        id: Math.max(...ticketCategories.map(t => t.id || 0), 0) + 1,
+        categoryName: newTicket.categoryName,
+        price: parseFloat(newTicket.price),
+        availableCount: parseInt(newTicket.availableCount)
+      };
+      setTicketCategories([...ticketCategories, ticket]);
+      setNewTicket({ categoryName: '', price: '', availableCount: '' });
+      setShowAddTicket(false);
+    } else {
+      alert('Please fill in all ticket fields');
+    }
+  };
+
+  const handleDeleteTicketCategory = (id) => {
+    setTicketCategories(ticketCategories.filter(ticket => ticket.id !== id));
+  };
+
+  const handleEditTicketCategory = (id) => {
+    const ticket = ticketCategories.find(t => t.id === id);
+    setNewTicket({
+      categoryName: ticket.categoryName,
+      price: String(ticket.price),
+      availableCount: String(ticket.availableCount)
+    });
+    setShowAddTicket(true);
+    // Remove old ticket when editing
+    setTicketCategories(ticketCategories.filter(t => t.id !== id));
   };
 
   return (
@@ -265,6 +308,125 @@ function EventManagementSection() {
               placeholder="Enter role/position"
             />
           </div>
+        </div>
+
+        {/* Ticket Management Section */}
+        <div className="form-section">
+          <h3 className="form-section-title">Ticket Management</h3>
+          
+          <div className="form-group full-width">
+            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <input
+                type="checkbox"
+                checked={ticketsEnabled}
+                onChange={(e) => setTicketsEnabled(e.target.checked)}
+                style={{ width: 'auto', cursor: 'pointer' }}
+              />
+              Enable Tickets for this Event
+            </label>
+          </div>
+
+          {ticketsEnabled && (
+            <>
+              <div className="schedule-header" style={{ marginTop: '20px' }}>
+                <h4 style={{ fontSize: '16px', fontWeight: '500' }}>Ticket Categories</h4>
+                <button 
+                  type="button"
+                  className="add-item-btn" 
+                  onClick={() => setShowAddTicket(!showAddTicket)}
+                >
+                  <span>+</span> Add Ticket
+                </button>
+              </div>
+
+              {showAddTicket && (
+                <div className="add-schedule-form" style={{ marginTop: '15px' }}>
+                  <div className="schedule-form-row">
+                    <div className="schedule-form-group">
+                      <input
+                        type="text"
+                        placeholder="Category Name (e.g., VIP, Normal)"
+                        value={newTicket.categoryName}
+                        onChange={(e) => setNewTicket({ ...newTicket, categoryName: e.target.value })}
+                        className="schedule-input"
+                      />
+                    </div>
+                    <div className="schedule-form-group">
+                      <input
+                        type="number"
+                        placeholder="Price"
+                        value={newTicket.price}
+                        onChange={(e) => setNewTicket({ ...newTicket, price: e.target.value })}
+                        className="schedule-input"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+                    <div className="schedule-form-group">
+                      <input
+                        type="number"
+                        placeholder="Available Count"
+                        value={newTicket.availableCount}
+                        onChange={(e) => setNewTicket({ ...newTicket, availableCount: e.target.value })}
+                        className="schedule-input"
+                        min="1"
+                      />
+                    </div>
+                  </div>
+                  <div className="schedule-form-actions">
+                    <button 
+                      type="button"
+                      className="schedule-save-btn" 
+                      onClick={handleAddTicketCategory}
+                    >
+                      Save
+                    </button>
+                    <button 
+                      type="button"
+                      className="schedule-cancel-btn" 
+                      onClick={() => setShowAddTicket(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="schedule-list" style={{ marginTop: '15px' }}>
+                {ticketCategories.map((ticket) => (
+                  <div key={ticket.id} className="schedule-item">
+                    <div className="schedule-item-left">
+                      <h3 className="schedule-item-title">{ticket.categoryName}</h3>
+                      <p className="schedule-item-time">
+                        Price: ${ticket.price} • Available: {ticket.availableCount} tickets
+                      </p>
+                    </div>
+                    <div className="schedule-item-actions">
+                      <button 
+                        type="button"
+                        className="schedule-edit-btn" 
+                        onClick={() => handleEditTicketCategory(ticket.id)}
+                      >
+                        <HiPencilAlt />
+                      </button>
+                      <button 
+                        type="button"
+                        className="schedule-delete-btn" 
+                        onClick={() => handleDeleteTicketCategory(ticket.id)}
+                      >
+                        <HiOutlineTrash />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {ticketCategories.length === 0 && (
+                  <p style={{ color: '#666', fontSize: '14px', textAlign: 'center', padding: '20px' }}>
+                    No ticket categories added yet
+                  </p>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         <button className="save-button" onClick={handleSaveChanges} disabled={isSaving}>
