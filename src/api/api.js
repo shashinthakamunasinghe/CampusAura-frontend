@@ -100,6 +100,62 @@ export const fetchEventById = async (eventId) => {
   }
 };
 
+// ==================== ADMIN COORDINATOR MANAGEMENT ====================
+
+/**
+ * Fetch all coordinators
+ * @param {string} token - Firebase auth token
+ * @returns {Promise<Array>} Array of coordinator objects
+ */
+export const fetchAllCoordinators = async (token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/admin/coordinators`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching coordinators:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update coordinator details
+ * @param {string} id - Coordinator ID
+ * @param {Object} coordinatorData - Updated coordinator details
+ * @param {string} token - Firebase auth token
+ * @returns {Promise<Object>} Updated coordinator object
+ */
+export const updateCoordinator = async (id, coordinatorData, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/admin/coordinators/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(coordinatorData)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating coordinator:', error);
+    throw error;
+  }
+};
+
 /**
  * Format date to readable format
  * @param {string} isoDate - ISO 8601 date string
@@ -173,9 +229,8 @@ const ADMIN_BASE_URL = `${API_BASE_URL}/api/admin`;
  * @returns {Promise<string>} Firebase ID token
  */
 const getAuthToken = async () => {
-  // Import firebase auth when needed
-  const { getAuth } = await import('firebase/auth');
-  const auth = getAuth();
+  // Import firebase auth instance from config
+  const { auth } = await import('../firebase/firebaseConfig');
   const user = auth.currentUser;
   
   if (!user) {
@@ -540,4 +595,35 @@ export const fetchTransactions = async () => {
  */
 export const fetchRecentTransactions = async (limit = 10) => {
   return await adminRequest(`/payments/transactions/recent?limit=${limit}`);
+};
+
+// ==================== COORDINATOR EVENT MANAGEMENT ====================
+
+/**
+ * Create a new event
+ * @param {Object} eventData - Event data to create
+ * @param {string} token - Firebase auth token
+ * @returns {Promise<Object>} Created event object
+ */
+export const createEvent = async (eventData, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/events`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(eventData)
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error creating event:', error);
+    throw error;
+  }
 };

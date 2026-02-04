@@ -10,6 +10,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
 } from 'chart.js';
 import '../Styles/AdminDashboard.css';
 import { MdEvent, MdPeople, MdHowToReg, MdShoppingBag, MdShoppingCart, MdPerson } from 'react-icons/md';
@@ -23,7 +24,8 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
 
 function AdminDashboard() {
