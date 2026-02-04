@@ -167,16 +167,18 @@ const handleRejectUser = async () => {
                   <MdCheckCircle style={{marginRight: 4}}/> Verified
                 </span>
               ) : user.type === "Student" ? (
-                <span className="user-mgmt-external">
-                  {user.idImage ? 'Pending Verification' : 'No ID Uploaded'}
-                </span>
-                <button 
-                  className="user-mgmt-verify-btn"
-                  onClick={() => handleVerifyClick(user)}
-                  disabled={!user.idImage}
-                >
-                  {user.idImage ? 'Verify ID' : 'No ID Uploaded'}
-                </button>
+                <>
+                  <span className="user-mgmt-external">
+                    {user.idImage ? 'Pending Verification' : 'No ID Uploaded'}
+                  </span>
+                  <button 
+                    className="user-mgmt-verify-btn"
+                    onClick={() => handleVerifyClick(user)}
+                    disabled={!user.idImage}
+                  >
+                    {user.idImage ? 'Verify ID' : 'No ID Uploaded'}
+                  </button>
+                </>
               ) : (
                 <span className="user-mgmt-external">External User</span>
               )}

@@ -49,19 +49,21 @@ export function AdminRoute({ children }) {
 }
 
 /**
- * ClientRoute - ONLY for normal users (STUDENT, COORDINATOR, EXTERNAL_USER)
- * 🔥 CRITICAL: Admins are KICKED OUT to /admin
+ * ClientRoute - ONLY for normal users (STUDENT, EXTERNAL_USER)
+ * 🔥 CRITICAL: Admins and Coordinators are KICKED OUT
  * - Not logged in → /login
  * - Admin → /admin (FORCED REDIRECT)
+ * - Coordinator → /coordinator (FORCED REDIRECT)
  * - Normal user → Allow access
  */
 export function ClientRoute({ children }) {
-  const { currentUser, userRole, isAdmin } = useAuth();
+  const { currentUser, userRole, isAdmin, isCoordinator } = useAuth();
 
   console.log('🔐 ClientRoute Check:', { 
     currentUser: !!currentUser, 
     userRole, 
-    isAdmin 
+    isAdmin,
+    isCoordinator
   });
 
   // Not authenticated at all
@@ -76,6 +78,12 @@ export function ClientRoute({ children }) {
     return <Navigate to="/admin" replace />;
   }
 
+  // 🔥 COORDINATOR TRYING TO ACCESS CLIENT PAGES - FORCE TO COORDINATOR DASHBOARD
+  if (isCoordinator) {
+    console.log('🚫 ClientRoute: Coordinator detected → FORCING to /coordinator');
+    return <Navigate to="/coordinator" replace />;
+  }
+
   // Normal user - grant access
   console.log('✅ ClientRoute: Normal user access granted');
   return children;
@@ -85,16 +93,18 @@ export function ClientRoute({ children }) {
  * PublicRoute - Accessible to all, but redirects if already logged in
  * Used for /login, /register, /signup pages
  * - Admin logged in → /admin
+ * - Coordinator logged in → /coordinator
  * - Normal user logged in → /
  * - Guest → Allow access
  */
 export function PublicRoute({ children, redirectAuthenticated = false }) {
-  const { currentUser, userRole, isAdmin } = useAuth();
+  const { currentUser, userRole, isAdmin, isCoordinator } = useAuth();
 
   console.log('🔐 PublicRoute Check:', { 
     currentUser: !!currentUser, 
     userRole, 
     isAdmin,
+    isCoordinator,
     redirectAuthenticated 
   });
 
@@ -104,6 +114,11 @@ export function PublicRoute({ children, redirectAuthenticated = false }) {
     if (isAdmin) {
       console.log('🚫 PublicRoute: Admin trying to access auth page → /admin');
       return <Navigate to="/admin" replace />;
+    }
+    // Coordinator trying to access login/signup → send to coordinator dashboard
+    if (isCoordinator) {
+      console.log('🚫 PublicRoute: Coordinator trying to access auth page → /coordinator');
+      return <Navigate to="/coordinator" replace />;
     }
     // Normal user trying to access login/signup → send to home
     console.log('✅ PublicRoute: Normal user already logged in → /');

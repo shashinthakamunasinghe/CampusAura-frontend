@@ -2,17 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 import '../Styles/Admin.css';
-import { MdDashboard, MdPeople, MdEvent, MdPerson, MdShoppingCart, MdEmail } from 'react-icons/md';
-import { FaDollarSign } from 'react-icons/fa';
+import { MdEvent, MdFeedback, MdEmail, MdConfirmationNumber } from 'react-icons/md';
 import logo from '../assets/1.png';
-import AdminDashboard from './AdminDashboard';
-import ManageCoordinators from './ManageCoordinators';
-import EventManagement from './EventManagement';
-import UserManagement from './UserManagement';
-import ProductManagement from './ProductManagement';
+import EventManagementSection from './CoordinatorDashboard/EventManagementSection';
+import TicketManagementSection from './CoordinatorDashboard/TicketManagementSection';
+import CommunityFeedbackSection from './CoordinatorDashboard/CommunityFeedbackSection';
 
-function AdminTopBar() {
-  const [activeSection, setActiveSection] = useState('overview');
+function Coordinator() {
+  const [activeSection, setActiveSection] = useState('community');
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -27,19 +24,14 @@ function AdminTopBar() {
 
   const renderContent = () => {
     switch (activeSection) {
-      case 'overview':
-        return <AdminDashboard />;
       case 'events':
-        return <EventManagement />;
-      case 'coordinators':
-        return <ManageCoordinators />;
-      case 'users':
-        return <UserManagement />;
-      case 'products':
-        return <ProductManagement />;
-      // ...existing code...
+        return <EventManagementSection />;
+      case 'tickets':
+        return <TicketManagementSection />;
+      case 'community':
+        return <CommunityFeedbackSection />;
       default:
-        return <AdminDashboard />;
+        return <CommunityFeedbackSection />;
     }
   };
 
@@ -51,7 +43,7 @@ function AdminTopBar() {
           <img src={logo} alt="Campus Aura Logo" className="topbar-logo" />
         </div>
         <div className="topbar-center">
-          <h2>Admin Dashboard</h2>
+          <h2>Coordinator Dashboard</h2>
         </div>
         <div className="topbar-right">
           <div className="notification-icon">
@@ -68,20 +60,12 @@ function AdminTopBar() {
         <div className="admin-sidebar">
           <ul className="admin-sidebar-list" style={{listStyle: 'none', padding: 0, margin: 0}}>
             <li
-              className={activeSection === "overview" ? "active" : ""}
-              onClick={() => setActiveSection("overview")}
+              className={activeSection === "community" ? "active" : ""}
+              onClick={() => setActiveSection("community")}
               style={{display: 'flex', alignItems: 'center', gap: '14px'}}
             >
-              <MdDashboard className="sidebar-icon" />
-              <span>Overview</span>
-            </li>
-            <li
-              className={activeSection === "coordinators" ? "active" : ""}
-              onClick={() => setActiveSection("coordinators")}
-              style={{display: 'flex', alignItems: 'center', gap: '14px'}}
-            >
-              <MdPeople className="sidebar-icon" />
-              <span>Manage Coordinators</span>
+              <MdFeedback className="sidebar-icon" />
+              <span>Community & Feedback</span>
             </li>
             <li
               className={activeSection === "events" ? "active" : ""}
@@ -92,22 +76,13 @@ function AdminTopBar() {
               <span>Event Management</span>
             </li>
             <li
-              className={activeSection === "users" ? "active" : ""}
-              onClick={() => setActiveSection("users")}
+              className={activeSection === "tickets" ? "active" : ""}
+              onClick={() => setActiveSection("tickets")}
               style={{display: 'flex', alignItems: 'center', gap: '14px'}}
             >
-              <MdPerson className="sidebar-icon" />
-              <span>User Management</span>
+              <MdConfirmationNumber className="sidebar-icon" />
+              <span>Ticket Management</span>
             </li>
-            <li
-              className={activeSection === "products" ? "active" : ""}
-              onClick={() => setActiveSection("products")}
-              style={{display: 'flex', alignItems: 'center', gap: '14px'}}
-            >
-              <MdShoppingCart className="sidebar-icon" />
-              <span>Product Management</span>
-            </li>
-            {/* Payment Monitoring removed */}
           </ul>
         </div>
 
@@ -120,4 +95,4 @@ function AdminTopBar() {
   );
 }
 
-export default AdminTopBar;
+export default Coordinator;

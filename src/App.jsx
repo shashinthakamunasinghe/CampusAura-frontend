@@ -12,11 +12,11 @@ import Navbar from "./Components/Navbar.jsx";
 import Footer from "./Components/LandingPage/Footer.jsx";
 
 /* Protected Routes */
-import { AdminRoute, ClientRoute, PublicRoute } from "./Components/ProtectedRoute.jsx";
-import RoleDebugger from "./Components/RoleDebugger.jsx";
+import { AdminRoute, ClientRoute, PublicRoute, CoordinatorRoute } from "./Components/ProtectedRoute.jsx";
 
 /* Admin */
 import AdminTopBar from "./Components/Admin.jsx";
+import Coordinator from "./Components/Coordinator.jsx";
 import EventManagement from "./Components/EventManagement";
 import CoordinatorDashboard from "./Components/CoordinatorDashboard/CoordinatorDashboard.jsx";
 
@@ -55,24 +55,27 @@ function Home() {
 }
 
 function App() {
-  const { currentUser, userRole, isAdmin } = useAuth();
+  const { currentUser, userRole, isAdmin, isCoordinator } = useAuth();
 
   console.log('🚀 App render:', { 
     authenticated: !!currentUser, 
     userRole, 
-    isAdmin 
+    isAdmin,
+    isCoordinator
   });
 
   return (
     <>
       
       <Routes>
-        {/* Home page - Admins are redirected to admin dashboard */}
+        {/* Home page - Admins and Coordinators are redirected to their respective dashboards */}
         <Route
           path="/"
           element={
             isAdmin ? (
               <Navigate to="/admin" replace />
+            ) : isCoordinator ? (
+              <Navigate to="/coordinator" replace />
             ) : (
               <>
                 <Navbar />
@@ -180,6 +183,17 @@ function App() {
             </AdminRoute>
           } 
         />
+
+        {/* Coordinator pages - Only for COORDINATOR role (no Navbar/Footer) */}
+        <Route 
+          path="/coordinator" 
+          element={
+            <CoordinatorRoute>
+              <Coordinator />
+            </CoordinatorRoute>
+          } 
+        />
+
         <Route 
           path="/test-events" 
           element={
@@ -194,16 +208,18 @@ function App() {
           path="*"
           element={
             currentUser ? (
-              isAdmin ? <Navigate to="/admin" replace /> : <Navigate to="/" replace />
+              isAdmin ? (
+                <Navigate to="/admin" replace />
+              ) : isCoordinator ? (
+                <Navigate to="/coordinator" replace />
+              ) : (
+                <Navigate to="/" replace />
+              )
             ) : (
               <Navigate to="/" replace />
             )
           }
         />
-        {/* Admin pages (no Navbar/Footer) */}
-        <Route path="/admin" element={<AdminTopBar />} />
-        <Route path="/coordinator" element={<CoordinatorDashboard />} />
-        <Route path="/test-events" element={<EventManagement />} />
       </Routes>
     </>
   );

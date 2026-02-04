@@ -2,6 +2,8 @@
   padding: 2rem;
   background-color: #f8fafc;
   min-height: calc(100vh - 70px);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .coordinators-header {
@@ -145,6 +147,13 @@
   color: #64748b;
 }
 
+.coordinator-department-text {
+  font-size: 0.813rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
 .coordinator-actions-section {
   display: flex;
   align-items: center;
@@ -224,6 +233,7 @@
   justify-content: center;
   z-index: 2000;
   padding: 1rem;
+  overflow-y: auto;
 }
 
 .modal-content {
@@ -234,6 +244,7 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  margin: auto;
 }
 
 .modal-header {
@@ -294,9 +305,13 @@
 
 .form-row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.25rem;
   margin-bottom: 1.25rem;
+}
+
+.form-row.single-column {
+  grid-template-columns: 1fr;
 }
 
 .form-group {
@@ -321,6 +336,11 @@
   background-color: white;
   transition: all 0.2s ease;
   font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .form-input:focus,
@@ -342,6 +362,11 @@
 
 select.form-input {
   cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 12px;
+  padding-right: 2.5rem;
 }
 
 /* Form Actions */
@@ -387,42 +412,181 @@ select.form-input {
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .manage-coordinators {
+    padding: 1.5rem;
+  }
+
+  .modal-content {
+    max-width: 90%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
+  .manage-coordinators {
+    padding: 1rem;
+  }
+
   .coordinators-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 1rem;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .create-coordinator-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 2.5rem;
   }
 
   .coordinator-card {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+    padding: 1rem;
   }
 
   .coordinator-actions-section {
     width: 100%;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.5rem;
   }
 
-  .form-row {
-    grid-template-columns: 1fr;
+  .coordinator-events-badge {
+    order: 1;
+  }
+
+  .coordinator-status-badge {
+    order: 2;
+  }
+
+  .action-btn {
+    order: 3;
+  }
+
+  /* Modal Styles */
+  .modal-overlay {
+    padding: 0;
+    align-items: stretch;
   }
 
   .modal-content {
-    max-height: 95vh;
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .modal-header {
+    padding: 1rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .modal-title {
+    font-size: 1.25rem;
   }
 
   .coordinator-form {
     padding: 1.5rem;
   }
 
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+
   .form-actions {
     flex-direction: column-reverse;
+    gap: 0.75rem;
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 1rem 0 0 0;
+    margin-top: 1.5rem;
+    z-index: 10;
   }
 
   .cancel-btn,
   .submit-btn {
     width: 100%;
+    padding: 0.875rem 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .manage-coordinators {
+    padding: 0.75rem;
+  }
+
+  .page-title {
+    font-size: 1.25rem;
+  }
+
+  .create-coordinator-btn {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .coordinator-avatar-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .coordinator-name-text {
+    font-size: 0.938rem;
+  }
+
+  .coordinator-email-text {
+    font-size: 0.813rem;
+  }
+
+  .coordinator-form {
+    padding: 1rem;
+  }
+
+  .modal-header {
+    padding: 0.875rem 1rem;
+  }
+
+  .modal-title {
+    font-size: 1.125rem;
+  }
+
+  .form-input,
+  .form-textarea {
+    font-size: 0.875rem;
+    padding: 0.625rem 0.875rem;
+  }
+
+  .form-label {
+    font-size: 0.813rem;
   }
 }

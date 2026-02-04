@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { MdCalendarToday } from 'react-icons/md';
 import { HiOutlineTrash, HiPencilAlt, HiUpload } from "react-icons/hi";
+import { useAuth } from '../../Context/AuthContext';
+import { createEvent } from '../../api/api';
 import './CoordinatorDashboard.css';
 
 function EventManagementSection() {
+  const { currentUser } = useAuth();
   const [eventData, setEventData] = useState({
     eventName: 'Tech Innovation Summit 2024',
     date: '15-06-2024',
@@ -26,6 +29,7 @@ function EventManagementSection() {
   const [newScheduleItem, setNewScheduleItem] = useState({ title: '', time: '', duration: '' });
   const [showAddSchedule, setShowAddSchedule] = useState(false);
   const [uploadedImages, setUploadedImages] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -49,9 +53,65 @@ function EventManagementSection() {
     }));
   };
 
-  const handleSaveChanges = () => {
-    alert('Event details saved successfully!');
-    console.log('Event Data:', eventData);
+  const handleSaveChanges = async () => {
+    if (!currentUser) {
+      alert('You must be logged in to create an event');
+      return;
+    }
+
+    // Validate required fields
+    if (!eventData.eventName || !eventData.date || !eventData.venue || !eventData.description) {
+      alert('Please fill in all required event details (Name, Date, Venue, Description)');
+      return;
+    }
+
+    setIsSaving(true);
+    
+    try {
+      const token = await currentUser.getIdToken();
+      
+      // Prepare event data for API
+      const eventPayload = {
+        title: eventData.eventName,
+        venue: eventData.venue,
+        dateTime: eventData.date, // Convert to ISO format if needed
+        description: eventData.description,
+        status: 'DRAFT', // Default status
+        ticketsAvailable: false,
+        ticketCategories: [],
+        pastEventDetails: [],
+        eventImageUrls: uploadedImages.map(img => img.url), // Array of image URLs
+        sellItems: [],
+        organizingDepartment: null,
+        category: null,
+        schedule: scheduleItems.map(item => ({
+          id: String(item.id),
+          title: item.title,
+          time: item.time,
+          duration: item.duration
+        })),
+        accountDetails: eventData.accountName || eventData.accountNumber || eventData.accountEmail || eventData.accountPhone || eventData.accountRole ? {
+          accountName: eventData.accountName || null,
+          accountNumber: eventData.accountNumber || null,
+          email: eventData.accountEmail || null,
+          phone: eventData.accountPhone || null,
+          role: eventData.accountRole || null
+        } : null
+      };
+
+      console.log('Creating event with data:', eventPayload);
+      
+      const response = await createEvent(eventPayload, token);
+      
+      console.log('Event created successfully:', response);
+      alert('Event created successfully! Event ID: ' + response.eventId);
+      
+    } catch (error) {
+      console.error('Failed to create event:', error);
+      alert('Failed to create event: ' + error.message);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleAddScheduleItem = () => {
@@ -207,7 +267,9 @@ function EventManagementSection() {
           </div>
         </div>
 
-        <button className="save-button" onClick={handleSaveChanges}>Save Changes</button>
+        <button className="save-button" onClick={handleSaveChanges} disabled={isSaving}>
+          {isSaving ? 'Saving...' : 'Save Changes'}
+        </button>
       </div>
 
       {/* Event Schedule Section */}

@@ -54,7 +54,7 @@ export default function EventFilter({
           <label>Sort by</label>
           <select value={sort} onChange={(e) => setSort(e.target.value)}>
             <option value="upcoming">Upcoming First</option>
-            <option value="newest">Newest</option>
+            <option value="latest">Newest</option>
             <option value="popular">Popular</option>
           </select>
         </div>
