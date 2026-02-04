@@ -33,15 +33,16 @@ function EventManagement() {
     event.coordinatorName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const pendingCount = events.filter(event => event.status === 'PENDING').length;
+  const pendingCount = events.filter(event => event.status === 'PENDING' || event.status === 'DRAFT').length;
 
   const handleApprove = async (id) => {
     try {
       await approveEvent(id);
       // Update local state
       setEvents(events.map(event => 
-        event.eventId === id ? { ...event, status: 'APPROVED' } : event
+        event.eventId === id ? { ...event, status: 'PUBLISHED' } : event
       ));
+      alert('Event approved and published successfully!');
     } catch (err) {
       console.error('Error approving event:', err);
       alert('Failed to approve event. Please try again.');
@@ -143,7 +144,7 @@ function EventManagement() {
             <div className="event-right-section">
               <span className={`event-status-pill ${event.status.toLowerCase()}`}>{event.status}</span>
 
-              {event.status === 'PENDING' && (
+              {(event.status === 'PENDING' || event.status === 'DRAFT') && (
                 <>
                   <button className="event-btn-approve" onClick={() => handleApprove(event.eventId)}>
                     <MdCheckCircle className="event-btn-icon" />
