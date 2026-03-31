@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import StudentRegister from "./studentRegister";           
 import ExternalRegister from "./externalRegister";     
-import logo from "../assets/logo.png";
+import logo from "../../assets/logo.png";
 import "./AuthenticationPages.css"; 
 
 function UnifiedSignUp() {

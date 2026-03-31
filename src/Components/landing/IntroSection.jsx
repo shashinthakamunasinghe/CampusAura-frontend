@@ -1,6 +1,6 @@
 import React from "react";
 import "./IntroSection.css";
-import introImage from "../../assets/ChatGPT Image Dec 21, 2025, 12_09_30 AM.png";
+import introImage from "../../assets/campus-banner.png";
 
 export default function IntroSection() {
   return (

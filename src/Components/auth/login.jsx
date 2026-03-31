@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../../firebase/firebaseConfig';
 import { useNavigate, Link } from "react-router-dom";
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 import './AuthenticationPages.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
