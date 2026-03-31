@@ -36,12 +36,12 @@ export function AuthProvider({ children }) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('✅ User data fetched:', data);
-        console.log('✅ User role:', data.role);
+        console.log('Γ£à User data fetched:', data);
+        console.log('Γ£à User role:', data.role);
         setUserData(data);
         setUserRole(data.role); // ADMIN, STUDENT, COORDINATOR, EXTERNAL_USER
       } else {
-        console.error('❌ Failed to fetch user data:', response.status);
+        console.error('Γ¥î Failed to fetch user data:', response.status);
         setUserData(null);
         setUserRole(null);
       }
