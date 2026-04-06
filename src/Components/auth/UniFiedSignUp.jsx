@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import StudentRegister from "./studentRegister";           
-import ExternalRegister from "./externalRegister";     
+import StudentRegister from "./StudentRegister";           
+import ExternalRegister from "./ExternalRegister";     
 import logo from "../../assets/logo.png";
 import "./AuthenticationPages.css"; 
 

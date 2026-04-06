@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { MdCalendarToday } from 'react-icons/md';
 import { HiOutlineTrash, HiPencilAlt, HiUpload } from "react-icons/hi";
-import { useAuth } from '../../Context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { createEvent } from '../../services/api';
 import './CoordinatorDashboard.css';
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../styles/theme.css";
+import "../Styles/theme.css";
 
 export default function Profile() {
   const [tab, setTab] = useState("Profile");
