@@ -2,43 +2,43 @@ import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 
 /* Auth */
-import Login from "./AuthenticationUI/login.jsx";
-import Register from "./AuthenticationUI/studentRegister.jsx";
-import NormalUserSignUp from "./AuthenticationUI/externalRegister.jsx";
-import UnifiedSignUp from "./AuthenticationUI/UniFiedSignUp";
+import Login from "./Components/auth/login.jsx";
+import Register from "./Components/auth/StudentRegister.jsx";
+import NormalUserSignUp from "./Components/auth/ExternalRegister.jsx";
+import UnifiedSignUp from "./Components/auth/UniFiedSignUp";
 
 /* Layout */
-import Navbar from "./Components/Navbar.jsx";
-import Footer from "./Components/LandingPage/Footer.jsx";
+import Navbar from "./Components/shared/Navbar.jsx";
+import Footer from "./Components/landing/Footer.jsx";
 
 /* Protected Routes */
-import { AdminRoute, ClientRoute, PublicRoute, CoordinatorRoute } from "./Components/ProtectedRoute.jsx";
+import { AdminRoute, ClientRoute, PublicRoute, CoordinatorRoute } from "./Components/shared/ProtectedRoute.jsx";
 
 /* Admin */
-import AdminTopBar from "./Components/Admin.jsx";
-import Coordinator from "./Components/Coordinator.jsx";
-import EventManagement from "./Components/EventManagement";
-import CoordinatorDashboard from "./Components/CoordinatorDashboard/CoordinatorDashboard.jsx";
+import AdminTopBar from "./Components/admin/Admin.jsx";
+import Coordinator from "./Components/coordinator/Coordinator.jsx";
+import EventManagement from "./Components/events/EventManagement";
+import CoordinatorDashboard from "./Components/coordinator/CoordinatorDashboard.jsx";
 
 /* Landing Page */
-import HeroSlider from "./Components/LandingPage/HeroSlider.jsx";
-import IntroSection from "./Components/LandingPage/IntroSection.jsx";
-import LatestEvents from "./Components/LandingPage/LatestEvents.jsx";
-import AboutSection from "./Components/LandingPage/AboutSection.jsx";
-import Marketplace from "./Components/LandingPage/MarketPlace.jsx";
-import MarketplaceFull from "./Components/LandingPage/MarketplaceFull.jsx";
-import Features from "./Components/LandingPage/Features.jsx";
-import ContactUs from "./Components/LandingPage/ContactUs.jsx";
+import HeroSlider from "./Components/landing/HeroSlider.jsx";
+import IntroSection from "./Components/landing/IntroSection.jsx";
+import LatestEvents from "./Components/landing/LatestEvents.jsx";
+import AboutSection from "./Components/landing/AboutSection.jsx";
+import Marketplace from "./Components/landing/MarketPlace.jsx";
+import MarketplaceFull from "./Components/landing/MarketplaceFull.jsx";
+import Features from "./Components/landing/Features.jsx";
+import ContactUs from "./Components/landing/ContactUs.jsx";
 
 /* Events */
-import FullEventPage from "./Components/EventPageUI/FullEventPage.jsx";
-import EventDetails from "./Components/EventPageUI/EventDetail.jsx";
+import FullEventPage from "./Components/events/FullEventPage.jsx";
+import EventDetails from "./Components/events/EventDetail.jsx";
 
 /* Auth Context */
-import { useAuth } from "./Context/AuthContext";
+import { useAuth } from "./context/AuthContext";
 /* Profile */
-import Profile from "./Profile";
-import Cart from "./Components/Cart";
+import Profile from "./pages/Profile";
+import Cart from "./Components/marketplace/Cart";
 
 function Home() {
   return (
