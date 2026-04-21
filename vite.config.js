@@ -10,4 +10,24 @@ export default defineConfig({
       },
     }),
   ],
+build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('firebase')) {
+              return 'firebase';
+            }
+            if (id.includes('chart.js') || id.includes('react-chartjs-2')) {
+              return 'chart';
+            }
+            if (id.includes('react-icons')) {
+              return 'icons';
+            }
+            return 'vendor';
+          }
+        }
+      }
+    }
+  }
 })
