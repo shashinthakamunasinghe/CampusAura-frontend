@@ -3,7 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import logo from "../../assets/logo-alt.png";
 
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../Context/AuthContext";
 import { MdAccountCircle, MdShoppingCart } from "react-icons/md";
 
 export default function Navbar() {
