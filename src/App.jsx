@@ -35,7 +35,7 @@ import FullEventPage from "./Components/events/FullEventPage.jsx";
 import EventDetails from "./Components/events/EventDetail.jsx";
 
 /* Auth Context */
-import { useAuth } from "./context/AuthContext";
+import { useAuth } from "./Context/AuthContext";
 /* Profile */
 import Profile from "./pages/Profile";
 import Cart from "./Components/marketplace/Cart";

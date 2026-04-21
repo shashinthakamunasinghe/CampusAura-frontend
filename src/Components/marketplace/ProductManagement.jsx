@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MdCheckCircle, MdCancel } from "react-icons/md";
 import { FiBox } from "react-icons/fi";
 import { fetchAdminProducts, approveProduct, disableProduct } from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../Context/AuthContext";
 import "./ProductManagement.css";
 
 export default function ProductManagement() {

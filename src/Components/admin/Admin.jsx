@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../Context/AuthContext';
 import './Admin.css';
 import { MdDashboard, MdPeople, MdEvent, MdPerson, MdShoppingCart, MdEmail } from 'react-icons/md';
 import { FaDollarSign } from 'react-icons/fa';
