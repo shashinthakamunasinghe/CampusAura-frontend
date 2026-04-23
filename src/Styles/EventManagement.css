@@ -235,6 +235,46 @@
   color: #666666;
 }
 
+.event-edit-btn {
+  background: none;
+  border: none;
+  color: #2c5aa0;
+  font-size: 1.1rem;
+  margin-left: 0.3rem;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  transition: background 0.18s, color 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.event-edit-btn:hover {
+  background: #e8f0f8;
+  color: #0a5db8;
+}
+
+.event-delete-btn {
+  background: #e74c3c;
+  border: none;
+  color: white;
+  font-size: 1.1rem;
+  margin-left: 0.3rem;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  transition: background 0.18s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.event-delete-btn:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+}
+
 @media (max-width: 1024px) {
   .event-right-section {
     flex-wrap: wrap;

@@ -1,21 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { MdCheckCircle, MdClose } from "react-icons/md";
+import { MdCheckCircle, MdClose, MdDelete } from "react-icons/md";
 import "../Styles/UserManagement.css";
+import { fetchUsers as apiFetchUsers, fetchUserStats, verifyStudentId, deleteUser } from "../api/api";
 
-const stats = [
-  { label: "Students", value: 385, sub: "Verified accounts" },
-  { label: "Postgraduates", value: 135, sub: "Verified accounts" },
-  { label: "Pending Verification", value: 12, sub: "ID uploads to review", highlight: true }
+// Stats will be populated from the real API
+const DEFAULT_STATS = [
+  { label: "Students", value: 0, sub: "Verified accounts" },
+  { label: "External Users", value: 0, sub: "Verified accounts" },
+  { label: "Pending Verification", value: 0, sub: "ID uploads to review", highlight: true }
 ];
 
-// Mock data - replace with API call
-const mockUsers = [
-  { _id: "1", name: "Alice Brown", email: "alice@university.edu", type: "Student", verified: true, idImage: null },
-  { _id: "2", name: "Bob Smith", email: "bob@university.edu", type: "Postgraduate", verified: false, idImage: "https://via.placeholder.com/400x250?text=Postgraduate+ID" },
-  { _id: "3", name: "Carol White", email: "carol@university.edu", type: "Student", verified: true, idImage: null },
-  { _id: "4", name: "David Lee", email: "david@university.edu", type: "Student", verified: false, idImage: "https://via.placeholder.com/400x250?text=Student+ID+Card", studentId: "STU12345" },
-  { _id: "5", name: "Emma Wilson", email: "emma@university.edu", type: "Student", verified: false, idImage: "https://via.placeholder.com/400x250?text=Student+ID+Verification", studentId: "STU67890" }
-];
+/**
+ * Map a UserResponseDTO from the backend to the shape expected by the UI.
+ * Backend: { uid, name, email, role, verified, degreeProgram, studentIdUrl, createdAt }
+ * UI:      { _id, name, email, type, verified, idImage, studentId }
+ */
+function mapUser(dto) {
+  return {
+    _id:       dto.uid,
+    name:      dto.name || "Unknown User",
+    email:     dto.email || "",
+    type:      dto.role === "STUDENT" ? "Student"
+             : dto.role === "EXTERNAL_USER" ? "Postgraduate"
+             : dto.role || "User",
+    verified:  dto.verified || false,
+    idImage:   dto.studentIdUrl || null,
+    studentId: dto.degreeProgram || null,
+  };
+}
 
 function getInitials(name) {
   return name.split(" ").map(n => n[0]).join("").toUpperCase();
@@ -24,26 +36,37 @@ function getInitials(name) {
 export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [users, setUsers] = useState(mockUsers);
-  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [stats, setStats] = useState(DEFAULT_STATS);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // fetchUsers(); // Uncomment when backend is ready
+    loadData();
   }, []);
 
-  const fetchUsers = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/admin/users', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      const data = await response.json();
-      setUsers(data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching users:', error);
+      setError(null);
+
+      // Fetch users and stats in parallel
+      const [usersData, statsData] = await Promise.all([
+        apiFetchUsers(),
+        fetchUserStats(),
+      ]);
+
+      setUsers(usersData.map(mapUser));
+
+      setStats([
+        { label: "Students",            value: statsData.totalUniversityStudents || 0, sub: "University students" },
+        { label: "External Users",      value: statsData.totalExternalUsers       || 0, sub: "External accounts" },
+        { label: "Pending Verification",value: statsData.totalPendingVerification  || 0, sub: "ID uploads to review", highlight: true },
+      ]);
+    } catch (err) {
+      console.error("Error loading user management data:", err);
+      setError("Failed to load users. Please try again.");
+    } finally {
       setLoading(false);
     }
   };
@@ -57,29 +80,46 @@ const handleVerifyClick = (user) => {
 
 const handleVerifyUser = async () => {
   try {
-    console.log("User verified successfully");
-
-    setUsers(users.map(u =>
-      u._id === selectedUser._id ? { ...u, verified: true } : u
-    ));
-  } catch (error) {
-    console.error("Error verifying user:", error);
+    await verifyStudentId(selectedUser._id, "VERIFIED");
+    // Optimistically update the local state
+    setUsers(prev =>
+      prev.map(u => u._id === selectedUser._id ? { ...u, verified: true } : u)
+    );
+  } catch (err) {
+    console.error("Error verifying user:", err);
   }
-
   setShowModal(false);
   setSelectedUser(null);
 };
 
 const handleRejectUser = async () => {
   try {
-    console.log("User rejected successfully");
-    // Optional: remove user or mark as rejected
-  } catch (error) {
-    console.error("Error rejecting user:", error);
+    if (selectedUser) {
+      await verifyStudentId(selectedUser._id, "REJECTED");
+      // Remove from the pending list (mark no idImage so it no longer appears as pending)
+      setUsers(prev =>
+        prev.map(u => u._id === selectedUser._id ? { ...u, idImage: null } : u)
+      );
+    }
+  } catch (err) {
+    console.error("Error rejecting user:", err);
   }
-
   setShowModal(false);
   setSelectedUser(null);
+};
+
+const handleDeleteUser = async (userId) => {
+  if (!window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+    return;
+  }
+  try {
+    await deleteUser(userId);
+    setUsers(users.filter(u => u._id !== userId));
+    alert("User deleted successfully!");
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    alert("Failed to delete user. Please try again.");
+  }
 };
 
  
@@ -90,6 +130,17 @@ const handleRejectUser = async () => {
 
   if (loading) {
     return <div className="user-mgmt-page">Loading...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="user-mgmt-page">
+        <h1 className="user-mgmt-title">User Management</h1>
+        <div className="error-message" style={{ color: '#ef4444', padding: '1rem', background: '#fef2f2', borderRadius: '8px', margin: '1rem 0' }}>
+          {error}
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -182,6 +233,13 @@ const handleRejectUser = async () => {
               ) : (
                 <span className="user-mgmt-external">External User</span>
               )}
+              <button 
+                className="user-mgmt-delete-btn"
+                onClick={() => handleDeleteUser(user._id)}
+                title="Delete user"
+              >
+                <MdDelete style={{marginRight: 4}}/> Delete
+              </button>
             </div>
           </div>
         ))}

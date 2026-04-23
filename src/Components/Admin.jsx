@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 import '../Styles/Admin.css';
 import { MdDashboard, MdPeople, MdEvent, MdPerson, MdShoppingCart, MdEmail } from 'react-icons/md';
-import { FaDollarSign } from 'react-icons/fa';
 import logo from '../assets/1.png';
 import AdminDashboard from './AdminDashboard';
 import ManageCoordinators from './ManageCoordinators';

@@ -1,63 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
+import { fetchMarketplaceProducts } from "../../api/api";
 import "../../Styles/MarketplaceFull.css";
-
-const demoProducts = [
-  {
-    id: 1,
-    name: "Textbook: Advanced Calculus",
-    price: 45,
-    category: "Books",
-    condition: "Like New",
-    images: ["/images/market1.jpg"],
-    description: "Advanced Calculus textbook, barely used.",
-    seller: { name: "Sarah M.", rating: 4.8, reviews: 12 },
-    badge: "Books"
-  },
-  {
-    id: 2,
-    name: "Desk Lamp - LED",
-    price: 28,
-    category: "Dorm",
-    condition: "New",
-    images: ["/images/market2.jpg"],
-    description: "Bright LED desk lamp, perfect for late-night study.",
-    seller: { name: "Alex K.", rating: 4.9, reviews: 24 },
-    badge: "Dorm"
-  },
-  {
-    id: 3,
-    name: "Laptop Stand",
-    price: 35,
-    category: "Tech",
-    condition: "Like New",
-    images: ["/images/market3.jpg"],
-    description: "Ergonomic laptop stand, adjustable height.",
-    seller: { name: "Jordan T.", rating: 4.7, reviews: 18 },
-    badge: "Tech"
-  },
-  {
-    id: 4,
-    name: "Backpack - Travel Size",
-    price: 52,
-    category: "Accessories",
-    condition: "New",
-    images: ["/images/market4.jpg"],
-    description: "Travel-size backpack, fits all essentials.",
-    seller: { name: "Casey R.", rating: 4.6, reviews: 15 },
-    badge: "Accessories"
-  }
-];
 
 const categories = ["All", "Books", "Dorm", "Tech", "Accessories"];
 
 export default function MarketplaceFull() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [priceRange, setPriceRange] = useState([0, 100]);
+  const [priceRange, setPriceRange] = useState([0, 15000]);
   const [modalProduct, setModalProduct] = useState(null);
   const navigate = useNavigate();
+
+  // Fetch products from database on component mount
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        const fetchedProducts = await fetchMarketplaceProducts();
+        
+        // Transform database products to match component's expected format
+        const transformedProducts = fetchedProducts.map((product) => ({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          category: product.category || "Accessories", // Default category if not provided
+          condition: "Good", // Database doesn't have condition field, use default
+          images: product.imageUrl ? [product.imageUrl] : ["https://via.placeholder.com/400?text=No+Image"], // Convert single imageUrl to array
+          description: product.description || "No description available",
+          seller: {
+            name: product.sellerName || "Unknown Seller",
+            rating: 4.5, // Database doesn't have rating, use default
+            reviews: 0 // Database doesn't have review count, use default
+          },
+          badge: product.category || "Accessories"
+        }));
+        
+        setProducts(transformedProducts);
+      } catch (error) {
+        console.error("Failed to load marketplace products:", error);
+        setProducts([]); // Set empty array on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
 
   const addToCart = (product) => {
     const savedCart = localStorage.getItem('cart');
@@ -85,7 +77,7 @@ export default function MarketplaceFull() {
     navigate('/cart');
   };
 
-  let filtered = demoProducts.filter((p) => {
+  let filtered = products.filter((p) => {
     const inCategory = selectedCategory === "All" || p.category === selectedCategory;
     const inPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
     const inSearch = search === "" || p.name.toLowerCase().includes(search.toLowerCase());
@@ -139,7 +131,7 @@ export default function MarketplaceFull() {
             <input
               type="number"
               min={priceRange[0]}
-              max={1000}
+              max={20000}
               value={priceRange[1]}
               onChange={(e) => setPriceRange([priceRange[0], +e.target.value])}
               className="marketplacefull-input"
@@ -149,27 +141,37 @@ export default function MarketplaceFull() {
       </div>
 
       <div className="marketplacefull-grid">
-        {filtered.map((item) => (
-          <div className="marketplacefull-card" key={item.id}>
-            <div className="marketplacefull-badges-single">
-              <span className="marketplacefull-badge-single">{item.badge}</span>
-            </div>
-            <img src={item.images[0]} alt={item.name} className="marketplacefull-card-img" />
-            <div className="marketplacefull-content">
-              <h3 className="marketplacefull-title">{item.name}</h3>
-              <div className="marketplacefull-stars-row">
-                <span className="marketplacefull-star">★</span>
-                <span className="marketplacefull-rating-num">4.0</span>
-                <span className="marketplacefull-rating-gray">({item.seller.rating})</span>
-              </div>
-              <div className="marketplacefull-seller">by {item.seller.name}</div>
-              <div className="marketplacefull-card-bottom">
-                <span className="marketplacefull-price">${item.price}</span>
-                <button className="marketplacefull-view-btn" onClick={() => setModalProduct(item)}>View</button>
-              </div>
-            </div>
+        {loading ? (
+          <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px", color: "#666" }}>
+            <p>Loading products...</p>
           </div>
-        ))}
+        ) : filtered.length > 0 ? (
+          filtered.map((item) => (
+            <div className="marketplacefull-card" key={item.id}>
+              <div className="marketplacefull-badges-single">
+                <span className="marketplacefull-badge-single">{item.badge}</span>
+              </div>
+              <img src={item.images[0]} alt={item.name} className="marketplacefull-card-img" />
+              <div className="marketplacefull-content">
+                <h3 className="marketplacefull-title">{item.name}</h3>
+                <div className="marketplacefull-stars-row">
+                  <span className="marketplacefull-star">★</span>
+                  <span className="marketplacefull-rating-num">4.0</span>
+                  <span className="marketplacefull-rating-gray">({item.seller.rating})</span>
+                </div>
+                <div className="marketplacefull-seller">by {item.seller.name}</div>
+                <div className="marketplacefull-card-bottom">
+                  <span className="marketplacefull-price">LKR {item.price.toLocaleString()}</span>
+                  <button className="marketplacefull-view-btn" onClick={() => setModalProduct(item)}>View</button>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px", color: "#666" }}>
+            <p>No products found matching your filters.</p>
+          </div>
+        )}
       </div>
 
       {modalProduct && (
@@ -179,7 +181,7 @@ export default function MarketplaceFull() {
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <img className="marketplacefull-modal-img" src={modalProduct.images[0]} alt={modalProduct.name} />
               <div className="marketplacefull-modal-title">{modalProduct.name}</div>
-              <p className="marketplacefull-modal-price">${modalProduct.price}</p>
+              <p className="marketplacefull-modal-price">LKR {modalProduct.price.toLocaleString()}</p>
               <p className="marketplacefull-modal-desc">{modalProduct.description}</p>
               <div className="marketplacefull-modal-seller">
                 Seller: {modalProduct.seller.name} <span style={{color:'#1db89a'}}>★ {modalProduct.seller.rating}</span>

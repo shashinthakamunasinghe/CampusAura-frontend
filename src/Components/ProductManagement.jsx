@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { MdCheckCircle, MdCancel } from "react-icons/md";
+import { MdCheckCircle, MdCancel, MdDelete } from "react-icons/md";
 import { FiBox } from "react-icons/fi";
-import { fetchAdminProducts, approveProduct, disableProduct } from "../api/api";
+import { fetchAdminProducts, approveProduct, disableProduct, deleteProduct } from "../api/api";
 import { useAuth } from "../Context/AuthContext";
 import "../Styles/ProductManagement.css";
 
@@ -54,6 +54,20 @@ export default function ProductManagement() {
     } catch (err) {
       console.error("Error disabling product:", err);
       alert("Failed to disable product. Please try again.");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this product? This action cannot be undone.")) {
+      return;
+    }
+    try {
+      await deleteProduct(id);
+      setProducts(products.filter(p => p.id !== id));
+      alert("Product deleted successfully!");
+    } catch (err) {
+      console.error("Error deleting product:", err);
+      alert("Failed to delete product. Please try again.");
     }
   };
 
@@ -123,7 +137,7 @@ export default function ProductManagement() {
                 <div className="product-mgmt-name">{product.name}</div>
                 <div className="product-mgmt-owner">by {product.sellerName || 'Unknown Seller'}</div>
               </div>
-              <div className="product-mgmt-price">${product.price}</div>
+              <div className="product-mgmt-price">LKR {product.price}</div>
               <div className="product-mgmt-status-actions">
                 <span className={`product-mgmt-status ${product.status.toLowerCase()}`}>
                   {product.status === 'PENDING' ? 'Pending' : 
@@ -138,7 +152,15 @@ export default function ProductManagement() {
                     <button className="product-mgmt-btn" onClick={() => handleDisable(product.id)}>
                       <MdCancel style={{marginRight: 4}}/> Disable
                     </button>
+                    <button className="product-mgmt-btn" style={{backgroundColor: '#e74c3c'}} onClick={() => handleDelete(product.id)}>
+                      <MdDelete style={{marginRight: 4}}/> Delete
+                    </button>
                   </>
+                )}
+                {product.status === "APPROVED" && (
+                  <button className="product-mgmt-btn" style={{backgroundColor: '#e74c3c'}} onClick={() => handleDelete(product.id)}>
+                    <MdDelete style={{marginRight: 4}}/> Delete
+                  </button>
                 )}
               </div>
             </div>

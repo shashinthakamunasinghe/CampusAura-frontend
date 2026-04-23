@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { MdCheckCircle, MdCancel, MdEdit, MdSearch } from 'react-icons/md';
-import { fetchAdminEvents, approveEvent, rejectEvent } from '../api/api';
+import { MdCheckCircle, MdCancel, MdEdit, MdSearch, MdDelete } from 'react-icons/md';
+import { fetchAdminEvents, approveEvent, rejectEvent, deleteEvent } from '../api/api';
 import '../Styles/EventManagement.css';
 
 function EventManagement() {
@@ -8,6 +8,7 @@ function EventManagement() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editingEventId, setEditingEventId] = useState(null);
 
   // Fetch events from backend
   useEffect(() => {
@@ -60,6 +61,25 @@ function EventManagement() {
       console.error('Error rejecting event:', err);
       alert('Failed to reject event. Please try again.');
     }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this event? This action cannot be undone.")) {
+      return;
+    }
+    try {
+      await deleteEvent(id);
+      setEvents(events.filter(event => event.eventId !== id));
+      alert("Event deleted successfully!");
+    } catch (err) {
+      console.error("Error deleting event:", err);
+      alert("Failed to delete event. Please try again.");
+    }
+  };
+
+  const handleEdit = (id) => {
+    setEditingEventId(editingEventId === id ? null : id);
+    alert("Event editing feature will be implemented. For now, contact the coordinator to edit the event.");
   };
 
   const formatDate = (dateTimeString) => {
@@ -157,8 +177,21 @@ function EventManagement() {
                 </>
               )}
 
-              <button className="event-edit-icon">
+              <button 
+                className="event-edit-btn" 
+                onClick={() => handleEdit(event.eventId)}
+                title="Edit event"
+              >
                 <MdEdit />
+              </button>
+
+              <button 
+                className="event-delete-btn" 
+                onClick={() => handleDelete(event.eventId)}
+                title="Delete event"
+                style={{backgroundColor: '#e74c3c'}}
+              >
+                <MdDelete />
               </button>
             </div>
           </div>

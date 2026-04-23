@@ -1,4 +1,4 @@
-﻿// API Configuration
+// API Configuration
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 // API Endpoints
@@ -8,6 +8,8 @@ export const API_ENDPOINTS = {
   LATEST_EVENTS: `${API_BASE_URL}/api/events/latest`,
   PUBLIC_EVENTS: `${API_BASE_URL}/api/events/public`,
   EVENT_BY_ID: (eventId) => `${API_BASE_URL}/api/events/public/${eventId}`,
+  // Public Marketplace Endpoints
+  PUBLIC_PRODUCTS: `${API_BASE_URL}/api/firestore/products`,
 };
 
 /**
@@ -17,11 +19,11 @@ export const API_ENDPOINTS = {
 export const fetchCarouselEvents = async () => {
   try {
     const response = await fetch(API_ENDPOINTS.LANDING_PAGE_CAROUSEL);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const data = await response.json();
     return data;
   } catch (error) {
@@ -37,11 +39,11 @@ export const fetchCarouselEvents = async () => {
 export const fetchLatestEvents = async () => {
   try {
     const response = await fetch(API_ENDPOINTS.LATEST_EVENTS);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const data = await response.json();
     console.log('Latest events from API:', data); // Debug log
     return data;
@@ -62,13 +64,13 @@ export const fetchPublicEvents = async (category = 'All', sortBy = 'upcoming') =
     const params = new URLSearchParams();
     if (category) params.append('category', category);
     if (sortBy) params.append('sortBy', sortBy);
-    
+
     const response = await fetch(`${API_ENDPOINTS.PUBLIC_EVENTS}?${params.toString()}`);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const data = await response.json();
     console.log('Public events from API:', data);
     console.log('First event images:', data[0]?.eventImageUrls);
@@ -87,15 +89,50 @@ export const fetchPublicEvents = async (category = 'All', sortBy = 'upcoming') =
 export const fetchEventById = async (eventId) => {
   try {
     const response = await fetch(API_ENDPOINTS.EVENT_BY_ID(eventId));
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const data = await response.json();
     return data;
   } catch (error) {
     console.error(`Error fetching event ${eventId}:`, error);
+    throw error;
+  }
+};
+
+// ==================== PUBLIC MARKETPLACE ====================
+
+/**
+ * Fetch all available products for marketplace
+ * @returns {Promise<Array>} Array of product objects (filtered for AVAILABLE/APPROVED status)
+ */
+export const fetchMarketplaceProducts = async () => {
+  try {
+    const response = await fetch(API_ENDPOINTS.PUBLIC_PRODUCTS);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Transform Firestore data and filter for available products
+    // The API returns QueryDocumentSnapshot objects, we need to extract id and data
+    const products = data
+      .map((doc) => {
+        const product = doc.data ? doc.data() : doc; // Handle both QueryDocumentSnapshot and plain objects
+        return {
+          ...product,
+          id: doc.id || product.id, // Ensure id is set
+        };
+      })
+      .filter(p => p.status === 'AVAILABLE' || p.status === 'APPROVED');
+
+    return products;
+  } catch (error) {
+    console.error('Error fetching marketplace products:', error);
     throw error;
   }
 };
@@ -115,11 +152,11 @@ export const fetchAllCoordinators = async (token) => {
         'Content-Type': 'application/json'
       }
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     return await response.json();
   } catch (error) {
     console.error('Error fetching coordinators:', error);
@@ -144,11 +181,11 @@ export const updateCoordinator = async (id, coordinatorData, token) => {
       },
       body: JSON.stringify(coordinatorData)
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     return await response.json();
   } catch (error) {
     console.error('Error updating coordinator:', error);
@@ -163,16 +200,16 @@ export const updateCoordinator = async (id, coordinatorData, token) => {
  */
 export const formatEventDate = (isoDate) => {
   if (!isoDate) return 'Date TBA';
-  
+
   const date = new Date(isoDate);
-  const options = { 
-    year: 'numeric', 
-    month: 'long', 
+  const options = {
+    year: 'numeric',
+    month: 'long',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
   };
-  
+
   return date.toLocaleDateString('en-US', options);
 };
 
@@ -183,14 +220,14 @@ export const formatEventDate = (isoDate) => {
  */
 export const formatCarouselDate = (isoDate) => {
   if (!isoDate) return 'Date TBA';
-  
+
   const date = new Date(isoDate);
-  const options = { 
-    month: 'short', 
+  const options = {
+    month: 'short',
     day: 'numeric',
     year: 'numeric'
   };
-  
+
   return date.toLocaleDateString('en-US', options);
 };
 
@@ -232,11 +269,11 @@ const getAuthToken = async () => {
   // Import firebase auth instance from config
   const { auth } = await import('../firebase/firebaseConfig');
   const user = auth.currentUser;
-  
+
   if (!user) {
     throw new Error('User not authenticated');
   }
-  
+
   return await user.getIdToken();
 };
 
@@ -615,12 +652,12 @@ export const createEvent = async (eventData, token) => {
       },
       body: JSON.stringify(eventData)
     });
-    
+
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-    
+
     return await response.json();
   } catch (error) {
     console.error('Error creating event:', error);
