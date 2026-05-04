@@ -37,7 +37,7 @@ export default function EventsPage() {
     .filter((event) =>
       selectedCategory === "All"
         ? true
-        : event.category === selectedCategory
+        : (event.category || '').toLowerCase() === selectedCategory.toLowerCase()
     )
     .sort((a, b) => {
       const parseEventDate = (event) => {

@@ -664,3 +664,167 @@ export const createEvent = async (eventData, token) => {
     throw error;
   }
 };
+
+// ==================== FEEDBACK API ====================
+
+/**
+ * Fetch all feedback for an event (public, no auth)
+ */
+export const fetchEventFeedback = async (eventId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/events/public/${eventId}/feedback`);
+    if (!response.ok) throw new Error('Failed to fetch feedback');
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching feedback:', error);
+    throw error;
+  }
+};
+
+/**
+ * Post feedback for an event (requires auth)
+ */
+export const postEventFeedback = async (eventId, text) => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/events/${eventId}/feedback`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ text }),
+    });
+    if (!response.ok) throw new Error('Failed to post feedback');
+    return await response.json();
+  } catch (error) {
+    console.error('Error posting feedback:', error);
+    throw error;
+  }
+};
+
+// ==================== PAYMENT API ====================
+
+/**
+ * Create a Stripe PaymentIntent for ticket purchase
+ */
+export const createTicketPaymentIntent = async (data) => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/payments/create-ticket-intent`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create payment intent');
+    return await response.json();
+  } catch (error) {
+    console.error('Error creating ticket payment intent:', error);
+    throw error;
+  }
+};
+
+/**
+ * Confirm ticket purchase after successful payment
+ */
+export const confirmTicketPurchase = async (saleData) => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/payments/confirm-ticket`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(saleData),
+    });
+    if (!response.ok) throw new Error('Failed to confirm ticket purchase');
+    return await response.json();
+  } catch (error) {
+    console.error('Error confirming ticket purchase:', error);
+    throw error;
+  }
+};
+
+/**
+ * Create a Stripe PaymentIntent for product purchase
+ */
+export const createProductPaymentIntent = async (data) => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/payments/create-product-intent`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create product payment intent');
+    return await response.json();
+  } catch (error) {
+    console.error('Error creating product payment intent:', error);
+    throw error;
+  }
+};
+
+/**
+ * Confirm product purchase after successful payment
+ */
+export const confirmProductPurchase = async (saleData) => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/payments/confirm-product`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(saleData),
+    });
+    if (!response.ok) throw new Error('Failed to confirm product purchase');
+    return await response.json();
+  } catch (error) {
+    console.error('Error confirming product purchase:', error);
+    throw error;
+  }
+};
+
+// ==================== ADMIN SALES API ====================
+
+/**
+ * Fetch all ticket sales (admin only)
+ */
+export const fetchTicketSales = async () => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/admin/sales/tickets`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch ticket sales');
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching ticket sales:', error);
+    throw error;
+  }
+};
+
+/**
+ * Fetch all product sales (admin only)
+ */
+export const fetchProductSales = async () => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/admin/sales/products`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch product sales');
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching product sales:', error);
+    throw error;
+  }
+};

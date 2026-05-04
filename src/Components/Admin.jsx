@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 import '../Styles/Admin.css';
-import { MdDashboard, MdPeople, MdEvent, MdPerson, MdShoppingCart, MdEmail } from 'react-icons/md';
+import { MdDashboard, MdPeople, MdEvent, MdPerson, MdShoppingCart, MdEmail, MdConfirmationNumber, MdStorefront } from 'react-icons/md';
 import logo from '../assets/1.png';
 import AdminDashboard from './AdminDashboard';
 import ManageCoordinators from './ManageCoordinators';
 import EventManagement from './EventManagement';
 import UserManagement from './UserManagement';
 import ProductManagement from './ProductManagement';
+import TicketSales from './TicketSales';
+import ProductSales from './ProductSales';
 
 function AdminTopBar() {
   const [activeSection, setActiveSection] = useState('overview');
@@ -36,7 +38,10 @@ function AdminTopBar() {
         return <UserManagement />;
       case 'products':
         return <ProductManagement />;
-      // ...existing code...
+      case 'ticketSales':
+        return <TicketSales />;
+      case 'productSales':
+        return <ProductSales />;
       default:
         return <AdminDashboard />;
     }
@@ -105,6 +110,22 @@ function AdminTopBar() {
             >
               <MdShoppingCart className="sidebar-icon" />
               <span>Product Management</span>
+            </li>
+            <li
+              className={activeSection === "ticketSales" ? "active" : ""}
+              onClick={() => setActiveSection("ticketSales")}
+              style={{display: 'flex', alignItems: 'center', gap: '14px'}}
+            >
+              <MdConfirmationNumber className="sidebar-icon" />
+              <span>Ticket Sales</span>
+            </li>
+            <li
+              className={activeSection === "productSales" ? "active" : ""}
+              onClick={() => setActiveSection("productSales")}
+              style={{display: 'flex', alignItems: 'center', gap: '14px'}}
+            >
+              <MdStorefront className="sidebar-icon" />
+              <span>Product Sales</span>
             </li>
             {/* Payment Monitoring removed */}
           </ul>

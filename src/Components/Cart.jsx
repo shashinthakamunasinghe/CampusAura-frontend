@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { MdDelete, MdAdd, MdRemove } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Context/AuthContext";
 import "../Styles/Cart.css";
 
 export default function Cart() {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
@@ -34,8 +36,26 @@ export default function Cart() {
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = 500;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+  const total = subtotal + shipping;
+
+  const handleCheckout = () => {
+    if (!currentUser) {
+      alert('Please sign in to proceed to checkout.');
+      return;
+    }
+    if (cartItems.length === 0) {
+      alert('Your cart is empty.');
+      return;
+    }
+    navigate('/cart/checkout', {
+      state: {
+        items: cartItems,
+        subtotal,
+        shipping,
+        total,
+      }
+    });
+  };
 
   return (
     <div className="cart-page">
@@ -90,16 +110,12 @@ export default function Cart() {
                   <span>Shipping</span>
                   <span>LKR {shipping.toFixed(2)}</span>
                 </div>
-                <div className="cart-summary-row">
-                  <span>Tax</span>
-                  <span>LKR {tax.toFixed(2)}</span>
-                </div>
                 <div className="cart-summary-divider"></div>
                 <div className="cart-summary-total">
                   <span>Total</span>
                   <span>LKR {total.toFixed(2)}</span>
                 </div>
-                <button className="cart-checkout-btn">
+                <button className="cart-checkout-btn" onClick={handleCheckout}>
                   Proceed to Checkout
                 </button>
                 <button className="cart-continue-shopping-btn" onClick={() => navigate("/marketplace")}>

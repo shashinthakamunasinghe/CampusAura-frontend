@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MdCheckCircle, MdCancel, MdEdit, MdSearch, MdDelete } from 'react-icons/md';
+import { MdCheckCircle, MdCancel, MdSearch, MdDelete } from 'react-icons/md';
 import { fetchAdminEvents, approveEvent, rejectEvent, deleteEvent } from '../api/api';
 import '../Styles/EventManagement.css';
 
@@ -8,7 +8,7 @@ function EventManagement() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editingEventId, setEditingEventId] = useState(null);
+
 
   // Fetch events from backend
   useEffect(() => {
@@ -77,10 +77,7 @@ function EventManagement() {
     }
   };
 
-  const handleEdit = (id) => {
-    setEditingEventId(editingEventId === id ? null : id);
-    alert("Event editing feature will be implemented. For now, contact the coordinator to edit the event.");
-  };
+
 
   const formatDate = (dateTimeString) => {
     if (!dateTimeString) return 'Date TBA';
@@ -177,13 +174,7 @@ function EventManagement() {
                 </>
               )}
 
-              <button 
-                className="event-edit-btn" 
-                onClick={() => handleEdit(event.eventId)}
-                title="Edit event"
-              >
-                <MdEdit />
-              </button>
+
 
               <button 
                 className="event-delete-btn" 
