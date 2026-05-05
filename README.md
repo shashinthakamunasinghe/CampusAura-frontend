@@ -15,6 +15,12 @@ CampusAura is designed to help students, coordinators, and administrators manage
 - Firebase authentication, Firestore, and storage integration
 - Responsive landing page with sections for highlights, features, and contact information
 
+##  Live Demo
+🔗 Frontend: https://campus-aura-frontend.vercel.app
+
+🔗 Backend API: https://campusaura-backend.lemontree-0868690c.centralindia.azurecontainerapps.io
+  
+
 ## Tech Stack
 
 - React 19
