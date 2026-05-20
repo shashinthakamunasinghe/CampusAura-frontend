@@ -156,7 +156,7 @@
 
 .product-mgmt-btn {
   background: #fff;
-  border: 1.5px solid #222;
+  border: none;
   color: #222;
   border-radius: 8px;
   padding: 0.35rem 1.1rem;
@@ -165,7 +165,8 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  transition: background 0.18s, color 0.18s, border 0.18s;
+  transition: background 0.18s, color 0.18s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .product-mgmt-btn:hover {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { MdCalendarToday } from 'react-icons/md';
 import { HiOutlineTrash, HiPencilAlt, HiUpload } from "react-icons/hi";
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../Context/AuthContext';
 import { createEvent } from '../../services/api';
 import './CoordinatorDashboard.css';
 
@@ -398,7 +398,7 @@ function EventManagementSection() {
                     <div className="schedule-item-left">
                       <h3 className="schedule-item-title">{ticket.categoryName}</h3>
                       <p className="schedule-item-time">
-                        Price: ${ticket.price} • Available: {ticket.availableCount} tickets
+                        Price: LKR {ticket.price} • Available: {ticket.availableCount} tickets
                       </p>
                     </div>
                     <div className="schedule-item-actions">

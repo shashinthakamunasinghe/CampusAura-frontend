@@ -1,10 +1,11 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { CiCalendar } from "react-icons/ci";
 import { IoLocationOutline } from "react-icons/io5";
 import { BsPeople } from "react-icons/bs";
 import { AiOutlineHeart, AiOutlineShareAlt, AiOutlineSend } from "react-icons/ai";
 import { useState, useEffect } from "react";
-import { fetchEventById } from "../../services/api";
+import { fetchEventById, fetchEventFeedback, postEventFeedback } from "../../services/api";
+import { useAuth } from "../../Context/AuthContext";
 import "./EventDetails.css";
 
 // Format date from API to match design
@@ -27,48 +28,72 @@ const formatEventDate = (isoDate) => {
 // Clean and validate image URL
 const getValidImageUrl = (urls) => {
   if (!urls || urls.length === 0) return null;
-  
+
   let imageUrl = urls[0];
-  
+
   // Fix malformed data URI (e.g., "https:data:image/jpeg;base64,...")
   if (imageUrl && imageUrl.startsWith('https:data:')) {
     imageUrl = imageUrl.replace('https:', '');
   }
-  
-  // Check if it's example.com (fake URL)
-  if (imageUrl && imageUrl.includes('example.com')) {
-    return null;
-  }
-  
-  // Validate it's a real URL or data URI
-  if (imageUrl && (imageUrl.startsWith('http') || imageUrl.startsWith('data:'))) {
+
+  if (!imageUrl) return null;
+  if (imageUrl.startsWith('data:')) {
     return imageUrl;
   }
-  
-  return null;
+
+  try {
+    const parsed = new URL(imageUrl);
+    if (!['http:', 'https:'].includes(parsed.protocol)) return null;
+    if (parsed.hostname === 'example.com' || parsed.hostname.endsWith('.example.com')) return null;
+    return parsed.toString();
+  } catch {
+    return null;
+  }
+};
+
+// Format relative time
+const formatRelativeTime = (isoDate) => {
+  if (!isoDate) return '';
+  const now = new Date();
+  const date = new Date(isoDate);
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'just now';
+  if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+  if (diffDays < 30) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
 export default function EventDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { currentUser, userData } = useAuth();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [tickets, setTickets] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [feedback, setFeedback] = useState("");
-  const [comments, setComments] = useState([
-    { id: 1, name: "Sarah Smith", text: "Great event! Looking forward to it.", time: "2 hours ago" },
-    { id: 2, name: "John Doe", text: "Can't wait for the keynote speech.", time: "1 hour ago" },
-  ]);
+  const [comments, setComments] = useState([]);
+  const [commentsLoading, setCommentsLoading] = useState(true);
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
 
+  // Load event details
   useEffect(() => {
     const loadEventDetails = async () => {
       try {
         setLoading(true);
         setError(null);
-        console.log('Fetching event details for ID:', id);
         const data = await fetchEventById(id);
-        console.log('Received event data:', data);
         setEvent(data);
+        // Auto-select first ticket category if available
+        if (data.ticketCategories && data.ticketCategories.length > 0) {
+          setSelectedCategory(data.ticketCategories[0]);
+        }
       } catch (err) {
         console.error('Failed to load event details:', err);
         setError('Failed to load event details. Please try again later.');
@@ -82,20 +107,74 @@ export default function EventDetails() {
     }
   }, [id]);
 
-  const handleAddComment = () => {
-    if (feedback.trim()) {
-      setComments([
-        ...comments,
-        {
-          id: comments.length + 1,
-          name: "You",
-          text: feedback,
-          time: "just now",
-        },
-      ]);
+  // Load feedback from database
+  useEffect(() => {
+    const loadFeedback = async () => {
+      try {
+        setCommentsLoading(true);
+        const data = await fetchEventFeedback(id);
+        setComments(data || []);
+      } catch (err) {
+        console.error('Failed to load feedback:', err);
+        setComments([]);
+      } finally {
+        setCommentsLoading(false);
+      }
+    };
+
+    if (id) {
+      loadFeedback();
+    }
+  }, [id]);
+
+  const handleAddComment = async () => {
+    if (!feedback.trim()) return;
+    if (!currentUser) {
+      alert('Please sign in to post feedback.');
+      return;
+    }
+
+    try {
+      setSubmittingFeedback(true);
+      const newFeedback = await postEventFeedback(id, feedback);
+      setComments([...comments, newFeedback]);
       setFeedback("");
+    } catch (err) {
+      console.error('Failed to post feedback:', err);
+      alert('Failed to post feedback. Please try again.');
+    } finally {
+      setSubmittingFeedback(false);
     }
   };
+
+  const handleReserveTickets = () => {
+    if (!currentUser) {
+      alert('Please sign in to reserve tickets.');
+      return;
+    }
+    if (!selectedCategory) {
+      alert('Please select a ticket category.');
+      return;
+    }
+    // Navigate to checkout page with ticket details
+    navigate(`/events/${id}/checkout`, {
+      state: {
+        event: {
+          eventId: event.eventId,
+          title: event.title,
+          dateTime: event.dateTime,
+          venue: event.venue,
+        },
+        ticketCategory: selectedCategory.categoryName,
+        ticketPrice: selectedCategory.price,
+        ticketCount: tickets,
+        totalAmount: selectedCategory.price * tickets,
+      }
+    });
+  };
+
+  // Calculate total price
+  const totalPrice = selectedCategory ? selectedCategory.price * tickets : 0;
 
   if (loading) {
     return (
@@ -236,30 +315,42 @@ export default function EventDetails() {
             <div className="feedback-form">
               <input
                 type="text"
-                placeholder="Share your thoughts about this event..."
+                placeholder={currentUser ? "Share your thoughts about this event..." : "Sign in to share your thoughts..."}
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
                 className="feedback-input"
+                disabled={!currentUser || submittingFeedback}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
               />
-              <button onClick={handleAddComment} className="feedback-btn">
-                <AiOutlineSend /> Post
+              <button 
+                onClick={handleAddComment} 
+                className="feedback-btn"
+                disabled={!currentUser || submittingFeedback || !feedback.trim()}
+              >
+                <AiOutlineSend /> {submittingFeedback ? 'Posting...' : 'Post'}
               </button>
             </div>
 
             {/* Comments List */}
             <div className="comments-section">
-              {comments.map((comment) => (
-                <div key={comment.id} className="comment-item">
-                  <div className="comment-avatar">{comment.name.charAt(0)}</div>
-                  <div className="comment-content">
-                    <div className="comment-header">
-                      <span className="comment-name">{comment.name}</span>
-                      <span className="comment-time">{comment.time}</span>
+              {commentsLoading ? (
+                <p style={{ color: '#64748b', textAlign: 'center', padding: '1rem' }}>Loading feedback...</p>
+              ) : comments.length === 0 ? (
+                <p style={{ color: '#64748b', textAlign: 'center', padding: '1rem' }}>No feedback yet. Be the first to share your thoughts!</p>
+              ) : (
+                comments.map((comment, idx) => (
+                  <div key={comment.feedbackId || idx} className="comment-item">
+                    <div className="comment-avatar">{(comment.userName || 'U').charAt(0).toUpperCase()}</div>
+                    <div className="comment-content">
+                      <div className="comment-header">
+                        <span className="comment-name">{comment.userName || 'User'}</span>
+                        <span className="comment-time">{formatRelativeTime(comment.createdAt)}</span>
+                      </div>
+                      <p className="comment-text">{comment.text}</p>
                     </div>
-                    <p className="comment-text">{comment.text}</p>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </section>
 
@@ -294,6 +385,28 @@ export default function EventDetails() {
           {/* Number of Tickets - Only if available */}
           {event.ticketsAvailable ? (
             <>
+              {/* Ticket Categories */}
+              {event.ticketCategories && event.ticketCategories.length > 0 && (
+                <div className="ticket-categories-section">
+                  <label className="tickets-label">Select Ticket Type</label>
+                  <div className="ticket-category-list">
+                    {event.ticketCategories.map((cat, idx) => (
+                      <div
+                        key={idx}
+                        className={`ticket-category-card ${selectedCategory?.categoryName === cat.categoryName ? 'selected' : ''}`}
+                        onClick={() => setSelectedCategory(cat)}
+                      >
+                        <div className="ticket-cat-info">
+                          <span className="ticket-cat-name">{cat.categoryName}</span>
+                          <span className="ticket-cat-available">{cat.availableCount || 0} left</span>
+                        </div>
+                        <span className="ticket-cat-price">LKR {(cat.price || 0).toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="tickets-section">
                 <label className="tickets-label">Number of Tickets</label>
                 <div className="ticket-controls">
@@ -319,8 +432,24 @@ export default function EventDetails() {
                 </div>
               </div>
 
+              {/* Price Display */}
+              {selectedCategory && (
+                <div className="ticket-price-summary">
+                  <div className="price-row">
+                    <span>{selectedCategory.categoryName} × {tickets}</span>
+                    <span>LKR {(selectedCategory.price * tickets).toLocaleString()}</span>
+                  </div>
+                  <div className="price-total-row">
+                    <span>Total</span>
+                    <span className="total-price">LKR {totalPrice.toLocaleString()}</span>
+                  </div>
+                </div>
+              )}
+
               {/* Reserve Button */}
-              <button className="reserve-btn">Reserve Tickets</button>
+              <button className="reserve-btn" onClick={handleReserveTickets}>
+                Reserve Tickets — LKR {totalPrice.toLocaleString()}
+              </button>
             </>
           ) : (
             <div className="sold-out-message">

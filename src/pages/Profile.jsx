@@ -1,12 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../Context/AuthContext";
 import "../Styles/theme.css";
 
 export default function Profile() {
+  const { userData, currentUser } = useAuth();
   const [tab, setTab] = useState("Profile");
-  const [fullName, setFullName] = useState("Shamm");
-  const [email, setEmail] = useState("sha@gmail.com");
-  const [phone, setPhone] = useState("119119");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [profilePic, setProfilePic] = useState(null);
+
+  // Populate fields from user data fetched from backend
+  useEffect(() => {
+    if (userData) {
+      setFullName(userData.name || "");
+      setEmail(userData.email || "");
+      setPhone(userData.phone || "");
+    } else if (currentUser) {
+      // Fallback to Firebase auth data
+      setFullName(currentUser.displayName || "");
+      setEmail(currentUser.email || "");
+    }
+  }, [userData, currentUser]);
 
   return (
     <>

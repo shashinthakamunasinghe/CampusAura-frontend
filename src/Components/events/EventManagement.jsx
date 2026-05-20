@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
-import { MdCheckCircle, MdCancel, MdEdit, MdSearch } from 'react-icons/md';
-import { fetchAdminEvents, approveEvent, rejectEvent } from '../../services/api';
+import { MdCheckCircle, MdCancel, MdSearch, MdDelete } from 'react-icons/md';
 import './EventManagement.css';
+import { fetchAdminEvents, approveEvent, rejectEvent, deleteEvent } from '../../services/api';
 
 function EventManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
 
   // Fetch events from backend
   useEffect(() => {
@@ -61,6 +62,22 @@ function EventManagement() {
       alert('Failed to reject event. Please try again.');
     }
   };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this event? This action cannot be undone.")) {
+      return;
+    }
+    try {
+      await deleteEvent(id);
+      setEvents(events.filter(event => event.eventId !== id));
+      alert("Event deleted successfully!");
+    } catch (err) {
+      console.error("Error deleting event:", err);
+      alert("Failed to delete event. Please try again.");
+    }
+  };
+
+
 
   const formatDate = (dateTimeString) => {
     if (!dateTimeString) return 'Date TBA';
@@ -157,8 +174,15 @@ function EventManagement() {
                 </>
               )}
 
-              <button className="event-edit-icon">
-                <MdEdit />
+
+
+              <button 
+                className="event-delete-btn" 
+                onClick={() => handleDelete(event.eventId)}
+                title="Delete event"
+                style={{backgroundColor: '#e74c3c'}}
+              >
+                <MdDelete />
               </button>
             </div>
           </div>

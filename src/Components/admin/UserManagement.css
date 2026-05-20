@@ -142,6 +142,26 @@
   background: #1565c0;
 }
 
+.user-mgmt-delete-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+}
+
+.user-mgmt-delete-btn:hover {
+  background: #c0392b;
+}
+
 .user-mgmt-external {
   color: #6c757d;
   font-size: 14px;

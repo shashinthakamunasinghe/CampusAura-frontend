@@ -18,31 +18,33 @@ const formatEventDate = (isoDate) => {
     hour12: true
   };
   
-  return date.toLocaleDateString('en-US', options).replace(',', ' |');
+  return date.toLocaleDateString('en-US', options).replace(/,/g, ' |');
 };
 
 // Clean and validate image URL
 const getValidImageUrl = (urls) => {
   if (!urls || urls.length === 0) return null;
-  
+
   let imageUrl = urls[0];
-  
+
   // Fix malformed data URI (e.g., "https:data:image/jpeg;base64,...")
   if (imageUrl && imageUrl.startsWith('https:data:')) {
     imageUrl = imageUrl.replace('https:', '');
   }
-  
-  // Check if it's example.com (fake URL)
-  if (imageUrl && imageUrl.includes('example.com')) {
-    return null;
-  }
-  
-  // Validate it's a real URL or data URI
-  if (imageUrl && (imageUrl.startsWith('http') || imageUrl.startsWith('data:'))) {
+
+  if (!imageUrl) return null;
+  if (imageUrl.startsWith('data:')) {
     return imageUrl;
   }
-  
-  return null;
+
+  try {
+    const parsed = new URL(imageUrl);
+    if (!['http:', 'https:'].includes(parsed.protocol)) return null;
+    if (parsed.hostname === 'example.com' || parsed.hostname.endsWith('.example.com')) return null;
+    return parsed.toString();
+  } catch {
+    return null;
+  }
 };
 
 export default function EventCard({ event }) {

@@ -98,12 +98,25 @@
   border-radius: 4px;
   width: 28px;
   height: 28px;
+  min-width: 28px;
+  min-height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   color: #475569;
   transition: all 0.2s;
+  overflow: visible;
+  padding: 0;
+  line-height: 1;
+  font-size: 16px;
+}
+
+.cart-qty-btn svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
 }
 
 .cart-qty-btn:hover {

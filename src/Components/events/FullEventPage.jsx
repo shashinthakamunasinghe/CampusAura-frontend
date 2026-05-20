@@ -11,28 +11,46 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    const loadEvents = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchPublicEvents();
+        setEvents(data);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load events. Please try again later.');
+        console.error('Error fetching events:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEvents();
+  }, []);
+
   // 🔍 Filter Logic
-  const filteredEvents = eventsData
+  const filteredEvents = events
     .filter((event) =>
       event.title.toLowerCase().includes(search.toLowerCase())
     )
     .filter((event) =>
       selectedCategory === "All"
         ? true
-        : event.category === selectedCategory
+        : (event.category || '').toLowerCase() === selectedCategory.toLowerCase()
     )
     .sort((a, b) => {
-      const parseEventDate = (dateStr) => {
-        // Fix format "March 15, 2025 | 9.00 AM" -> "March 15, 2025 9:00 AM"
-        return new Date(dateStr.replace(" |", "").replace(".", ":"));
+      const parseEventDate = (event) => {
+        if (!event || !event.dateTime) return new Date(0); // Return epoch for invalid dates
+        return new Date(event.dateTime); // ISO 8601 format
       };
 
       if (sort === "upcoming") {
-        return parseEventDate(a.date) - parseEventDate(b.date);
+        return parseEventDate(a) - parseEventDate(b);
       } else if (sort === "newest") {
-        return parseEventDate(b.date) - parseEventDate(a.date);
+        return parseEventDate(b) - parseEventDate(a);
       } else if (sort === "popular") {
-        return b.attending - a.attending;
+        return (b.attendeeCount || 0) - (a.attendeeCount || 0);
       }
       return 0;
     });

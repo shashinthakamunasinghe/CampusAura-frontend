@@ -33,10 +33,12 @@ import ContactUs from "./Components/landing/ContactUs.jsx";
 /* Events */
 import FullEventPage from "./Components/events/FullEventPage.jsx";
 import EventDetails from "./Components/events/EventDetail.jsx";
+import TicketCheckout from "./Components/events/TicketCheckout.jsx";
 
 /* Auth Context */
-import { useAuth } from "./context/AuthContext";
+import { useAuth } from "./Context/AuthContext";
 /* Profile */
+import CartCheckout from "./Components/CartCheckout";
 import Profile from "./pages/Profile";
 import Cart from "./Components/marketplace/Cart";
 
@@ -162,6 +164,27 @@ function App() {
           }
         />
         <Route path="/cart" element={<Cart />} />
+        <Route
+          path="/cart/checkout"
+          element={
+            <ClientRoute>
+              <Navbar />
+              <CartCheckout />
+              <Footer />
+            </ClientRoute>
+          }
+        />
+
+        <Route
+          path="/events/:id/checkout"
+          element={
+            <ClientRoute>
+              <Navbar />
+              <TicketCheckout />
+              <Footer />
+            </ClientRoute>
+          }
+        />
 
         <Route
           path="/profile"
