@@ -116,7 +116,7 @@ export const fetchEventById = async (eventId) => {
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return await response.json();
   } catch (error) {
-    console.error(`Error fetching event ${eventId}:`, error);
+    console.error('Error fetching event:', { eventId, error });
     throw error;
   }
 };
