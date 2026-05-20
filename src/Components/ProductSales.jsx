@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchProductSales } from '../api/api';
+import { fetchProductSales } from '../services/api';
 import { MdSearch, MdStorefront } from 'react-icons/md';
 import './events/EventManagement.css';
 

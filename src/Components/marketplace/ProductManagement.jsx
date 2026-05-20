@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { MdCheckCircle, MdCancel, MdDelete } from "react-icons/md";
 import { FiBox } from "react-icons/fi";
-import { fetchAdminProducts, approveProduct, disableProduct, deleteProduct } from "../../api/api";
+import { fetchAdminProducts, approveProduct, disableProduct, deleteProduct } from "../../services/api";
 import { useAuth } from "../../Context/AuthContext";
 import "./ProductManagement.css";
 

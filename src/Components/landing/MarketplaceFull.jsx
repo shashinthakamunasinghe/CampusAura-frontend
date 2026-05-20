@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
-import { fetchMarketplaceProducts } from "../../api/api";
+import { fetchMarketplaceProducts } from "../../services/api";
 import "./MarketplaceFull.css";
 
 const categories = ["All", "Books", "Dorm", "Tech", "Accessories"];

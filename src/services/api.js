@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
   LATEST_EVENTS: `${API_BASE_URL}/api/events/latest`,
   PUBLIC_EVENTS: `${API_BASE_URL}/api/events/public`,
   EVENT_BY_ID: (eventId) => `${API_BASE_URL}/api/events/public/${eventId}`,
+  PUBLIC_PRODUCTS: `${API_BASE_URL}/api/firestore/products`,
 };
 
 // ============================================================
@@ -350,6 +351,173 @@ export const fetchPaymentStats = async () => adminRequest('/payments/stats');
 export const fetchTransactions = async () => adminRequest('/payments/transactions');
 export const fetchRecentTransactions = async (limit = 10) =>
   adminRequest(`/payments/transactions/recent?limit=${limit}`);
+
+// ============================================================
+// Public Marketplace APIs
+// ============================================================
+
+export const fetchMarketplaceProducts = async () => {
+  try {
+    const response = await fetch(API_ENDPOINTS.PUBLIC_PRODUCTS);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    return data
+      .map((doc) => {
+        const product = doc.data ? doc.data() : doc;
+        return { ...product, id: doc.id || product.id };
+      })
+      .filter((p) => p.status === 'AVAILABLE' || p.status === 'APPROVED');
+  } catch (error) {
+    console.error('Error fetching marketplace products:', error);
+    throw error;
+  }
+};
+
+// ============================================================
+// Feedback APIs
+// ============================================================
+
+export const fetchEventFeedback = async (eventId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/events/public/${eventId}/feedback`);
+    if (!response.ok) throw new Error('Failed to fetch feedback');
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching feedback:', error);
+    throw error;
+  }
+};
+
+export const postEventFeedback = async (eventId, text) => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/events/${eventId}/feedback`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ text }),
+    });
+    if (!response.ok) throw new Error('Failed to post feedback');
+    return await response.json();
+  } catch (error) {
+    console.error('Error posting feedback:', error);
+    throw error;
+  }
+};
+
+// ============================================================
+// Payment APIs
+// ============================================================
+
+export const createTicketPaymentIntent = async (data) => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/payments/create-ticket-intent`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create payment intent');
+    return await response.json();
+  } catch (error) {
+    console.error('Error creating ticket payment intent:', error);
+    throw error;
+  }
+};
+
+export const confirmTicketPurchase = async (saleData) => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/payments/confirm-ticket`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(saleData),
+    });
+    if (!response.ok) throw new Error('Failed to confirm ticket purchase');
+    return await response.json();
+  } catch (error) {
+    console.error('Error confirming ticket purchase:', error);
+    throw error;
+  }
+};
+
+export const createProductPaymentIntent = async (data) => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/payments/create-product-intent`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create product payment intent');
+    return await response.json();
+  } catch (error) {
+    console.error('Error creating product payment intent:', error);
+    throw error;
+  }
+};
+
+export const confirmProductPurchase = async (saleData) => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/payments/confirm-product`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(saleData),
+    });
+    if (!response.ok) throw new Error('Failed to confirm product purchase');
+    return await response.json();
+  } catch (error) {
+    console.error('Error confirming product purchase:', error);
+    throw error;
+  }
+};
+
+// ============================================================
+// Admin Sales APIs
+// ============================================================
+
+export const fetchTicketSales = async () => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/admin/sales/tickets`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch ticket sales');
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching ticket sales:', error);
+    throw error;
+  }
+};
+
+export const fetchProductSales = async () => {
+  try {
+    const token = await getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/admin/sales/products`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch product sales');
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching product sales:', error);
+    throw error;
+  }
+};
 
 // ============================================================
 // Utility Helpers

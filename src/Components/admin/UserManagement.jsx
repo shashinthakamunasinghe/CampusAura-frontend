@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { MdCheckCircle, MdClose, MdDelete } from "react-icons/md";
 import "./UserManagement.css";
-import { fetchUsers as apiFetchUsers, fetchUserStats, verifyStudentId, deleteUser } from "../../api/api";
+import { fetchUsers as apiFetchUsers, fetchUserStats, verifyStudentId, deleteUser } from "../../services/api";
 
 // Stats will be populated from the real API
 const DEFAULT_STATS = [

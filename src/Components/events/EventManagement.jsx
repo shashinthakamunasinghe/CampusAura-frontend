@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MdCheckCircle, MdCancel, MdSearch, MdDelete } from 'react-icons/md';
 import './EventManagement.css';
-import { fetchAdminEvents, approveEvent, rejectEvent, deleteEvent } from '../../api/api';
+import { fetchAdminEvents, approveEvent, rejectEvent, deleteEvent } from '../../services/api';
 
 function EventManagement() {
   const [searchTerm, setSearchTerm] = useState('');

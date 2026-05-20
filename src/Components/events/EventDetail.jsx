@@ -4,7 +4,7 @@ import { IoLocationOutline } from "react-icons/io5";
 import { BsPeople } from "react-icons/bs";
 import { AiOutlineHeart, AiOutlineShareAlt, AiOutlineSend } from "react-icons/ai";
 import { useState, useEffect } from "react";
-import { fetchEventById, fetchEventFeedback, postEventFeedback } from "../../api/api";
+import { fetchEventById, fetchEventFeedback, postEventFeedback } from "../../services/api";
 import { useAuth } from "../../Context/AuthContext";
 import "./EventDetails.css";
 

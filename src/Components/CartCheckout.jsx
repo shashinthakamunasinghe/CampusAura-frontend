@@ -3,7 +3,7 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { jsPDF } from 'jspdf';
-import { createProductPaymentIntent, confirmProductPurchase } from '../api/api';
+import { createProductPaymentIntent, confirmProductPurchase } from '../services/api';
 import { useAuth } from '../Context/AuthContext';
 import '../Styles/Checkout.css';
 
