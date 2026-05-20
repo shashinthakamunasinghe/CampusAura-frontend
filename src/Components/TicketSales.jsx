@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fetchTicketSales } from '../api/api';
 import { MdSearch, MdConfirmationNumber } from 'react-icons/md';
-import '../Styles/EventManagement.css';
+import './events/EventManagement.css';
 
 export default function TicketSales() {
   const [sales, setSales] = useState([]);

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fetchProductSales } from '../api/api';
 import { MdSearch, MdStorefront } from 'react-icons/md';
-import '../Styles/EventManagement.css';
+import './events/EventManagement.css';
 
 export default function ProductSales() {
   const [sales, setSales] = useState([]);
