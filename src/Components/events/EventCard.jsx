@@ -18,7 +18,7 @@ const formatEventDate = (isoDate) => {
     hour12: true
   };
   
-  return date.toLocaleDateString('en-US', options).replace(',', ' |');
+  return date.toLocaleDateString('en-US', options).replace(/,/g, ' |');
 };
 
 // Clean and validate image URL
